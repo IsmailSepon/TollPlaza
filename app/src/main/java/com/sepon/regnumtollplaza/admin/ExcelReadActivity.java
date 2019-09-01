@@ -1,0 +1,384 @@
+package com.sepon.regnumtollplaza.admin;
+
+import android.Manifest;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.sepon.regnumtollplaza.BaseActivity;
+import com.sepon.regnumtollplaza.ChittagongActivity;
+import com.sepon.regnumtollplaza.LoginActivity;
+import com.sepon.regnumtollplaza.R;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+public class ExcelReadActivity extends AppCompatActivity {
+
+    private static final String TAG = "ExcelReadActivity";
+
+    // Declare variables
+    private String[] FilePathStrings;
+    private String[] FileNameStrings;
+    private File[] listFile;
+    File file;
+
+    Button btnUpDirectory,btnSDCard;
+
+    ArrayList<String> pathHistory;
+    String lastDirectory;
+    int count = 0;
+
+    //ArrayList<XYValue> uploadData;
+    ArrayList<Report> uploadData;
+    ArrayList<Report> uploadReport;
+    ArrayList<Report> ctrlRreport;
+    ListView lvInternalStorage;
+    FirebaseUser currentUser;
+    FirebaseAuth mAuth;
+    String studentId, thisDate;
+
+    FirebaseDatabase database;
+    DatabaseReference myRef;
+    Map<String, Report> reportHashMap = new HashMap<>();
+
+    FirebaseFirestore firebaseFirestore;
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main2);
+
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
+        studentId = currentUser.getUid();
+
+        SimpleDateFormat currentDate = new SimpleDateFormat("dd-MM-yyyy");
+        Date todayDate = new Date();
+        thisDate = currentDate.format(todayDate);
+
+
+         database = FirebaseDatabase.getInstance();
+         myRef = database.getReference("chittagong");
+
+
+         firebaseFirestore = FirebaseFirestore.getInstance();
+
+
+        lvInternalStorage = (ListView) findViewById(R.id.lvInternalStorage);
+        btnUpDirectory = (Button) findViewById(R.id.btnUpDirectory);
+        btnSDCard = (Button) findViewById(R.id.btnViewSDCard);
+        uploadData = new ArrayList<>();
+
+        //need to check the permissions
+        checkFilePermissions();
+
+        lvInternalStorage.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                lastDirectory = pathHistory.get(count);
+                if(lastDirectory.equals(adapterView.getItemAtPosition(i))){
+                    Log.d(TAG, "lvInternalStorage: Selected a file for upload: " + lastDirectory);
+
+                    final ProgressDialog dialog= ProgressDialog.show(ExcelReadActivity.this,"Reading Excel File", "Please wait....",true);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d(TAG, "Excel Reading thread start.....");
+                            //Execute method for reading the excel data.
+                            //readExcelData(lastDirectory);
+                            readExcelFileFromAssets(lastDirectory);
+                            dialog.dismiss();
+                            Intent intent = new Intent(getApplicationContext(), ChittagongActivity.class);
+                            startActivity(intent);
+                            //finish();
+                        }
+                    }).start();
+
+                    //TODO go for next
+
+                }else
+                {
+                    count++;
+                    pathHistory.add(count,(String) adapterView.getItemAtPosition(i));
+                    checkInternalStorage();
+                    Log.d(TAG, "lvInternalStorage: " + pathHistory.get(count));
+                }
+            }
+        });
+
+        //Goes up one directory level
+        btnUpDirectory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(count == 0){
+                    Log.d(TAG, "btnUpDirectory: You have reached the highest level directory.");
+                }else{
+                    pathHistory.remove(count);
+                    count--;
+                    checkInternalStorage();
+                    Log.d(TAG, "btnUpDirectory: " + pathHistory.get(count));
+                }
+            }
+        });
+
+        //Opens the SDCard or phone memory
+        btnSDCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                count = 0;
+                pathHistory = new ArrayList<String>();
+                pathHistory.add(count,System.getenv("EXTERNAL_STORAGE"));
+                Log.d(TAG, "btnSDCard: " + pathHistory.get(count));
+                checkInternalStorage();
+            }
+        });
+    }
+
+
+
+    private void checkInternalStorage() {
+        Log.d(TAG, "checkInternalStorage: Started.");
+        try{
+            if (!Environment.getExternalStorageState().equals(
+                    Environment.MEDIA_MOUNTED)) {
+                toastMessage("No SD card found.");
+            }
+            else{
+                // Locate the image folder in your SD Car;d
+                file = new File(pathHistory.get(count));
+                Log.d(TAG, "checkInternalStorage: directory path: " + pathHistory.get(count));
+            }
+
+            listFile = file.listFiles();
+            // Create a String array for FilePathStrings
+            FilePathStrings = new String[listFile.length];
+            // Create a String array for FileNameStrings
+            FileNameStrings = new String[listFile.length];
+
+            for (int i = 0; i < listFile.length; i++) {
+                // Get the path of the image file
+                FilePathStrings[i] = listFile[i].getAbsolutePath();
+                // Get the name image file
+                FileNameStrings[i] = listFile[i].getName();
+            }
+
+            for (int i = 0; i < listFile.length; i++)
+            {
+                Log.d("Files", "FileName:" + listFile[i].getName());
+            }
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, FilePathStrings);
+            lvInternalStorage.setAdapter(adapter);
+
+        }catch(NullPointerException e){
+            Log.e(TAG, "checkInternalStorage: NULLPOINTEREXCEPTION " + e.getMessage() );
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void checkFilePermissions() {
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP){
+            int permissionCheck = this.checkSelfPermission("Manifest.permission.READ_EXTERNAL_STORAGE");
+            permissionCheck += this.checkSelfPermission("Manifest.permission.WRITE_EXTERNAL_STORAGE");
+            if (permissionCheck != 0) {
+
+                this.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE}, 1001); //Any number
+            }
+        }else{
+            Log.d(TAG, "checkBTPermissions: No need to check permissions. SDK version < LOLLIPOP.");
+        }
+    }
+
+    /**
+     * customizable toast
+     * @param message
+     */
+    private void toastMessage(String message){
+        Toast.makeText(this,message, Toast.LENGTH_SHORT).show();
+    }
+
+    public void readExcelFileFromAssets(String filePath) {
+
+        uploadReport = new ArrayList<>();
+        ctrlRreport = new ArrayList<>();
+
+        File inputFile = new File(filePath);
+
+
+        try {
+            //InputStream myInput;
+            InputStream inputStream = new FileInputStream(inputFile);
+            POIFSFileSystem myFileSystem = new POIFSFileSystem(inputStream);
+            HSSFWorkbook myWorkBook = new HSSFWorkbook(myFileSystem);
+            HSSFSheet mySheet = myWorkBook.getSheetAt(0);
+            Iterator<Row> rowIter = mySheet.rowIterator();
+            int rowno =0;
+            while (rowIter.hasNext()) {
+                Log.e(TAG, " row no "+ rowno );
+                HSSFRow myRow = (HSSFRow) rowIter.next();
+                if(rowno >=2) {
+                    Iterator<Cell> cellIter = myRow.cellIterator();
+                    int colno =0;
+                    String a="",b="",c="",d="",e="",f = "",g="",h="",I="",j="",k="";
+                    int tr;
+                    while (cellIter.hasNext()) {
+                        HSSFCell myCell = (HSSFCell) cellIter.next();
+                        if (colno==0){
+                            a = myCell.toString();
+
+                        }else if (colno==1){
+                            b = myCell.toString();
+                        }else if (colno==2){
+                            c = myCell.toString();
+                        }else if (colno==3){
+                            d = myCell.toString();
+                        }else if (colno==4){
+                            e = myCell.toString();
+                        }else if (colno==5){
+                            f = myCell.toString();
+                        }else if (colno==6){
+                            g = myCell.toString();
+                        }else if (colno==7){
+                            h = myCell.toString();
+                        }else if (colno==8){
+                            I = myCell.toString();
+                        }else if (colno==9){
+                            j = myCell.toString();
+                        }else if (colno==10){
+                            k = myCell.toString();
+                        }
+                        colno++;
+                       // Log.e(TAG, " Index :" + myCell.getColumnIndex() + " -- " + myCell.toString());
+                    }
+
+                    Log.d(TAG, a + " -- "+ b+ "  -- "+ c+"  -- "+ d+"  -- "+ e+"  -- "+ f+"  -- "+ g+"  -- "+ h+"  -- "+ I+"  -- "+ j+"  -- "+ k+"\n");
+
+                        Report report = new Report(String.valueOf(a),String.valueOf(b),String.valueOf(c),String.valueOf(d),String.valueOf(e),String.valueOf(f),String.valueOf(g),
+                                String.valueOf(h),String.valueOf(I),String.valueOf(j),String.valueOf(k));
+                        if (report.getDateTime().isEmpty()){
+
+                        }else {
+
+                            if (report.getAxleWiseWeight().isEmpty()){
+                                ctrlRreport.add(report);
+
+                                //myRef.child("ctrlReport").child(thisDate).child(tr).setValue(report);
+                            }else {
+                                uploadReport.add(report);
+                                //myRef.child("regularReport").setValue(report);
+                            }
+                        }
+                }
+                rowno++;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "error "+ e.toString());
+        }
+
+        //myRef.child(thisDate).child("ctrlReport").updateChildren(map);
+
+        Log.e(TAG, "report size "+ uploadReport.size());
+        Log.e(TAG, "report size "+ String.valueOf(ctrlRreport.size()));
+
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "Firebase Report-1 upload thread start.....");
+
+                for (int i=0;i<uploadReport.size();i++){
+                    Log.e(TAG, String.valueOf(i));
+                    Report report = uploadReport.get(i);
+                    myRef.child(thisDate).child("RegularReport").child(String.valueOf(i)).setValue(report);
+                    reportHashMap.put(String.valueOf(i), report);
+
+                }
+
+            }
+        }).start();
+
+        for (int i=0;i<ctrlRreport.size();i++){
+            Log.e(TAG, String.valueOf(i));
+            Report report = ctrlRreport.get(i);
+            myRef.child(thisDate).child("ctrlReport").child(String.valueOf(i)).setValue(report);
+
+
+        }
+
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.adminmenu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.adduser:
+                // write your code here
+
+                Intent intent = new Intent(this, AddUserActivity.class);
+                startActivity(intent);
+
+                return true;
+
+            case R.id.logout:
+                // write your code here
+                logout();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void logout() {
+        mAuth.getInstance().signOut();
+        Intent login = new Intent(ExcelReadActivity.this, LoginActivity.class);
+        startActivity(login);
+        ExcelReadActivity.this.finish();
+    }
+}
