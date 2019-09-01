@@ -72,9 +72,6 @@ public class Today_Chittagong_fragment extends Fragment {
         isTodayReportAvillable();
 
 
-
-
-
         return view;
     }
 

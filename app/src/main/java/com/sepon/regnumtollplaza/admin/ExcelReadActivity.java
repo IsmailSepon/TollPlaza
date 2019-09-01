@@ -129,9 +129,10 @@ public class ExcelReadActivity extends AppCompatActivity {
                             //readExcelData(lastDirectory);
                             readExcelFileFromAssets(lastDirectory);
                             dialog.dismiss();
+
                             Intent intent = new Intent(getApplicationContext(), ChittagongActivity.class);
                             startActivity(intent);
-                            //finish();
+                            finish();
                         }
                     }).start();
 
@@ -242,7 +243,6 @@ public class ExcelReadActivity extends AppCompatActivity {
 
         uploadReport = new ArrayList<>();
         ctrlRreport = new ArrayList<>();
-
         File inputFile = new File(filePath);
 
 
@@ -255,7 +255,7 @@ public class ExcelReadActivity extends AppCompatActivity {
             Iterator<Row> rowIter = mySheet.rowIterator();
             int rowno =0;
             while (rowIter.hasNext()) {
-                Log.e(TAG, " row no "+ rowno );
+               // Log.e(TAG, " row no "+ rowno );
                 HSSFRow myRow = (HSSFRow) rowIter.next();
                 if(rowno >=2) {
                     Iterator<Cell> cellIter = myRow.cellIterator();
@@ -292,7 +292,7 @@ public class ExcelReadActivity extends AppCompatActivity {
                        // Log.e(TAG, " Index :" + myCell.getColumnIndex() + " -- " + myCell.toString());
                     }
 
-                    Log.d(TAG, a + " -- "+ b+ "  -- "+ c+"  -- "+ d+"  -- "+ e+"  -- "+ f+"  -- "+ g+"  -- "+ h+"  -- "+ I+"  -- "+ j+"  -- "+ k+"\n");
+                    //Log.d(TAG, a + " -- "+ b+ "  -- "+ c+"  -- "+ d+"  -- "+ e+"  -- "+ f+"  -- "+ g+"  -- "+ h+"  -- "+ I+"  -- "+ j+"  -- "+ k+"\n");
 
                         Report report = new Report(String.valueOf(a),String.valueOf(b),String.valueOf(c),String.valueOf(d),String.valueOf(e),String.valueOf(f),String.valueOf(g),
                                 String.valueOf(h),String.valueOf(I),String.valueOf(j),String.valueOf(k));
@@ -300,13 +300,12 @@ public class ExcelReadActivity extends AppCompatActivity {
 
                         }else {
 
-                            if (report.getAxleWiseWeight().isEmpty()){
+                            if (report.getTotalAxles().equals("") && report.getAxleWiseWeight().equals("")){
                                 ctrlRreport.add(report);
 
-                                //myRef.child("ctrlReport").child(thisDate).child(tr).setValue(report);
                             }else {
                                 uploadReport.add(report);
-                                //myRef.child("regularReport").setValue(report);
+
                             }
                         }
                 }
@@ -319,7 +318,7 @@ public class ExcelReadActivity extends AppCompatActivity {
         //myRef.child(thisDate).child("ctrlReport").updateChildren(map);
 
         Log.e(TAG, "report size "+ uploadReport.size());
-        Log.e(TAG, "report size "+ String.valueOf(ctrlRreport.size()));
+        Log.e(TAG, "report size "+ ctrlRreport.size());
 
 
         new Thread(new Runnable() {
