@@ -44,8 +44,9 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    public void showprogessdialog() {
+    public void showprogessdialog(String title) {
         if (progDailog != null) {
+            progDailog.setTitle(title);
             progDailog.setMessage("Please wait...");
             progDailog.setCancelable(false);
             progDailog.show();

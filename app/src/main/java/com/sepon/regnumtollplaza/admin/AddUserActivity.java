@@ -77,7 +77,7 @@ public class AddUserActivity extends BaseActivity {
 
     private void registation() {
 
-        showprogessdialog();
+        showprogessdialog("Registration a new User");
         password =confirmPasset.getText().toString();
 
         mAuth.createUserWithEmailAndPassword(email,password)

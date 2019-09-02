@@ -59,7 +59,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             }else if (password.isEmpty()){
                 password_et.setError("Give Password");
             }else {
-                showprogessdialog();
+                showprogessdialog("Checking your Information");
                 mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                             @Override

@@ -41,36 +41,17 @@ public class Today_Chittagong_fragment extends Fragment {
     private FirebaseDatabase database;
     private DatabaseReference databaseReference;
 
-
-    private ArrayList<Report> regularReport2 = new ArrayList<>();
-    private ArrayList<Report> regularReport3 = new ArrayList<>();
-    private ArrayList<Report> regularReport4 = new ArrayList<>();
-    private ArrayList<Report> regularReport5 = new ArrayList<>();
-    private ArrayList<Report> regularReport6 = new ArrayList<>();
-    private ArrayList<Report> regularReport7 = new ArrayList<>();
-    private ArrayList<Report> totallaxel = new ArrayList<>();
-
-    private ArrayList<Report> ctrlReport2 = new ArrayList<>();
-    private ArrayList<Report> ctrlReport3 = new ArrayList<>();
-    private ArrayList<Report> ctrlReport4 = new ArrayList<>();
-    private ArrayList<Report> ctrlReport5 = new ArrayList<>();
-    private ArrayList<Report> ctrlReport6 = new ArrayList<>();
-    private ArrayList<Report> ctrlReport7 = new ArrayList<>();
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.today_chittagong_fragment, container, false);
 
-
         initilize(view);
 
         getDate();
 
         isTodayReportAvillable();
-
 
         return view;
     }
@@ -86,7 +67,16 @@ public class Today_Chittagong_fragment extends Fragment {
                 if (dataSnapshot.exists()){
                     // Toast.makeText(getActivity(), "report  update yet", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
-                    getRegularReportFromFirebase();
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            getRegularReportFromFirebase();
+                        }
+                    }).start();
+
+                    getCtrlRdata();
+
                 }else {
                     dialog.dismiss();
                     Toast.makeText(getActivity(), "report not update yet", Toast.LENGTH_SHORT).show();
@@ -102,7 +92,13 @@ public class Today_Chittagong_fragment extends Fragment {
     }
 
     private void getRegularReportFromFirebase() {
-        Dialog dialog = ProgressDialog.show(getActivity(), "Getting Report From Server", "Please wait...", true);
+         ArrayList<Report> regularReport2 = new ArrayList<>();
+         ArrayList<Report> regularReport3 = new ArrayList<>();
+         ArrayList<Report> regularReport4 = new ArrayList<>();
+         ArrayList<Report> regularReport5 = new ArrayList<>();
+         ArrayList<Report> regularReport6 = new ArrayList<>();
+         ArrayList<Report> regularReport7 = new ArrayList<>();
+         ArrayList<Report> totallaxel = new ArrayList<>();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = database.getReference("chittagong").child(thisDate).child("RegularReport");
@@ -129,7 +125,7 @@ public class Today_Chittagong_fragment extends Fragment {
                     }else {
 
                     }
-                  //  totallaxel.add(report);
+                    totallaxel.add(report);
 
                 }
                 at = String.valueOf(totallaxel.size());
@@ -143,10 +139,8 @@ public class Today_Chittagong_fragment extends Fragment {
                 Log.e("totaltr", at);
                 //toptext.setText("Total Axel Report: "+String.valueOf(regularReport.size()));
 
-
                 Log.e("axel2", a2);
                 r1.setText("Regular : "+a2);
-
 
                 Log.e("axel3", a3);
                 r2.setText("Regular : "+a3);
@@ -164,12 +158,10 @@ public class Today_Chittagong_fragment extends Fragment {
                 r6.setText("Regular : "+a7);
 
 
-                dialog.dismiss();
-                getCtrlRdata();
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                dialog.dismiss();
+
                 Toast.makeText(getActivity(), "Server Error", Toast.LENGTH_SHORT).show();
 
 
@@ -178,6 +170,13 @@ public class Today_Chittagong_fragment extends Fragment {
     }
 
     private void getCtrlRdata() {
+         ArrayList<Report> ctrlReport2 = new ArrayList<>();
+         ArrayList<Report> ctrlReport3 = new ArrayList<>();
+         ArrayList<Report> ctrlReport4 = new ArrayList<>();
+         ArrayList<Report> ctrlReport5 = new ArrayList<>();
+         ArrayList<Report> ctrlReport6 = new ArrayList<>();
+         ArrayList<Report> ctrlReport7 = new ArrayList<>();
+
         Dialog dialog = ProgressDialog.show(getActivity(), "Getting Ctrl+R Report From Server", "Please wait...", true);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -275,6 +274,7 @@ public class Today_Chittagong_fragment extends Fragment {
         cr5 = view.findViewById(R.id.axectrl6Ramount);
         cr6 = view.findViewById(R.id.axectrl7Ramount);
     }
+
 
 
 }

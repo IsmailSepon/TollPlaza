@@ -2,6 +2,7 @@ package com.sepon.regnumtollplaza.admin;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -27,6 +29,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.core.Repo;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.sepon.regnumtollplaza.BaseActivity;
@@ -45,14 +48,18 @@ import org.apache.poi.ss.usermodel.Row;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
-public class ExcelReadActivity extends AppCompatActivity {
+import io.opencensus.metrics.LongGauge;
+
+public class ExcelReadActivity extends BaseActivity {
 
     private static final String TAG = "ExcelReadActivity";
 
@@ -70,6 +77,7 @@ public class ExcelReadActivity extends AppCompatActivity {
 
     //ArrayList<XYValue> uploadData;
     ArrayList<Report> uploadData;
+    List<Report> allreport;
     ArrayList<Report> uploadReport;
     ArrayList<Report> ctrlRreport;
     ListView lvInternalStorage;
@@ -108,7 +116,7 @@ public class ExcelReadActivity extends AppCompatActivity {
         lvInternalStorage = (ListView) findViewById(R.id.lvInternalStorage);
         btnUpDirectory = (Button) findViewById(R.id.btnUpDirectory);
         btnSDCard = (Button) findViewById(R.id.btnViewSDCard);
-        uploadData = new ArrayList<>();
+
 
         //need to check the permissions
         checkFilePermissions();
@@ -120,7 +128,9 @@ public class ExcelReadActivity extends AppCompatActivity {
                 if(lastDirectory.equals(adapterView.getItemAtPosition(i))){
                     Log.d(TAG, "lvInternalStorage: Selected a file for upload: " + lastDirectory);
 
-                    final ProgressDialog dialog= ProgressDialog.show(ExcelReadActivity.this,"Reading Excel File", "Please wait....",true);
+                   // final ProgressDialog dialog= ProgressDialog.show(ExcelReadActivity.this,"Reading Excel File", "Please wait....",true);
+
+                   showprogessdialog("Reading Excel File");
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -128,11 +138,18 @@ public class ExcelReadActivity extends AppCompatActivity {
                             //Execute method for reading the excel data.
                             //readExcelData(lastDirectory);
                             readExcelFileFromAssets(lastDirectory);
-                            dialog.dismiss();
+
+
+
+                            serilizeReport();
+
+                            hiddenProgressDialog();
 
                             Intent intent = new Intent(getApplicationContext(), ChittagongActivity.class);
                             startActivity(intent);
-                            finish();
+
+                            //dialog.dismiss();
+
                         }
                     }).start();
 
@@ -146,6 +163,8 @@ public class ExcelReadActivity extends AppCompatActivity {
                     Log.d(TAG, "lvInternalStorage: " + pathHistory.get(count));
                 }
             }
+
+
         });
 
         //Goes up one directory level
@@ -174,7 +193,10 @@ public class ExcelReadActivity extends AppCompatActivity {
                 checkInternalStorage();
             }
         });
+
+
     }
+
 
 
 
@@ -240,9 +262,8 @@ public class ExcelReadActivity extends AppCompatActivity {
     }
 
     public void readExcelFileFromAssets(String filePath) {
-
-        uploadReport = new ArrayList<>();
-        ctrlRreport = new ArrayList<>();
+        uploadData = new ArrayList<Report>();
+        allreport = new ArrayList<>();
         File inputFile = new File(filePath);
 
 
@@ -291,23 +312,25 @@ public class ExcelReadActivity extends AppCompatActivity {
                         colno++;
                        // Log.e(TAG, " Index :" + myCell.getColumnIndex() + " -- " + myCell.toString());
                     }
-
                     //Log.d(TAG, a + " -- "+ b+ "  -- "+ c+"  -- "+ d+"  -- "+ e+"  -- "+ f+"  -- "+ g+"  -- "+ h+"  -- "+ I+"  -- "+ j+"  -- "+ k+"\n");
-
                         Report report = new Report(String.valueOf(a),String.valueOf(b),String.valueOf(c),String.valueOf(d),String.valueOf(e),String.valueOf(f),String.valueOf(g),
                                 String.valueOf(h),String.valueOf(I),String.valueOf(j),String.valueOf(k));
                         if (report.getDateTime().isEmpty()){
-
+//
                         }else {
 
-                            if (report.getTotalAxles().equals("") && report.getAxleWiseWeight().equals("")){
-                                ctrlRreport.add(report);
-
-                            }else {
-                                uploadReport.add(report);
-
-                            }
-                        }
+//                            String test = report.getAxleWiseWeight();
+//                            if (test.isEmpty()){
+//                                //ctrlRreport.add(report);
+//                                Log.e(TAG, report.getTransactionNumber());
+//
+//                            }else {
+//                                //uploadReport.add(report);
+//
+//                            }
+                            uploadData.add(report);
+                            //allreport.add(report);
+                       }
                 }
                 rowno++;
             }
@@ -317,33 +340,34 @@ public class ExcelReadActivity extends AppCompatActivity {
 
         //myRef.child(thisDate).child("ctrlReport").updateChildren(map);
 
-        Log.e(TAG, "report size "+ uploadReport.size());
-        Log.e(TAG, "report size "+ ctrlRreport.size());
+        Log.e(TAG, "report size "+ uploadData.size());
 
+      //  Log.e(TAG, "report size "+ ctrlRreport.size());
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "Firebase Report-1 upload thread start.....");
-
-                for (int i=0;i<uploadReport.size();i++){
-                    Log.e(TAG, String.valueOf(i));
-                    Report report = uploadReport.get(i);
-                    myRef.child(thisDate).child("RegularReport").child(String.valueOf(i)).setValue(report);
-                    reportHashMap.put(String.valueOf(i), report);
-
-                }
-
-            }
-        }).start();
-
-        for (int i=0;i<ctrlRreport.size();i++){
-            Log.e(TAG, String.valueOf(i));
-            Report report = ctrlRreport.get(i);
-            myRef.child(thisDate).child("ctrlReport").child(String.valueOf(i)).setValue(report);
-
-
-        }
+//
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Log.d(TAG, "Firebase Report-1 upload thread start.....");
+//
+//                for (int i=0;i<uploadReport.size();i++){
+//                    Log.e(TAG, String.valueOf(i));
+//                    Report report = uploadReport.get(i);
+//                    myRef.child(thisDate).child("RegularReport").child(String.valueOf(i)).setValue(report);
+//                    reportHashMap.put(String.valueOf(i), report);
+//
+//                }
+//
+//            }
+//        }).start();
+//
+//        for (int i=0;i<ctrlRreport.size();i++){
+//            Log.e(TAG, String.valueOf(i));
+//            Report report = ctrlRreport.get(i);
+//            myRef.child(thisDate).child("ctrlReport").child(String.valueOf(i)).setValue(report);
+//
+//
+//        }
 
     }
 
@@ -380,4 +404,60 @@ public class ExcelReadActivity extends AppCompatActivity {
         startActivity(login);
         ExcelReadActivity.this.finish();
     }
+
+
+    private void serilizeReport() {
+
+
+        uploadReport = new ArrayList<>();
+        ctrlRreport = new ArrayList<>();
+
+            for (Report report : uploadData){
+
+                String t = report.getTotalWeight();
+                String a = report.getAxleWiseWeight();
+                if (a.isEmpty() || a.equals("0.0")){
+                    Log.e(TAG, report.getTransactionNumber());
+                    ctrlRreport.add(report);
+                }else {
+                    uploadReport.add(report);
+                }
+            }
+        Log.e(TAG, String.valueOf("All report: "+uploadData.size()));
+        Log.e(TAG, String.valueOf("Crtl+R report: "+ctrlRreport.size()));
+        Log.e(TAG, String.valueOf("Regular report: "+uploadReport.size()));
+
+
+        String msg = "All report: "+uploadData.size()+"Crtl+R report: "+ctrlRreport.size()+"Regular report: "+uploadReport.size();
+        uploadRepoert();
+    }
+
+    private void uploadRepoert() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "Firebase Report-1 upload thread start.....");
+
+                for (int i=0;i<uploadReport.size();i++){
+                    Log.e(TAG, String.valueOf(i));
+                    Report report = uploadReport.get(i);
+                    myRef.child(thisDate).child("RegularReport").child(String.valueOf(i)).setValue(report);
+                    reportHashMap.put(String.valueOf(i), report);
+
+                }
+
+            }
+        }).start();
+
+        for (int i=0;i<ctrlRreport.size();i++){
+            Log.e(TAG, String.valueOf(i));
+            Report report = ctrlRreport.get(i);
+            myRef.child(thisDate).child("ctrlReport").child(String.valueOf(i)).setValue(report);
+
+
+        }
+
+    }
+
 }
