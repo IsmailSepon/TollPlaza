@@ -1,6 +1,7 @@
 package com.sepon.regnumtollplaza.admin;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -25,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -91,6 +94,9 @@ public class ExcelReadActivity extends BaseActivity {
 
     FirebaseFirestore firebaseFirestore;
 
+    ProgressDialog dialog;
+
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,8 +115,7 @@ public class ExcelReadActivity extends BaseActivity {
          database = FirebaseDatabase.getInstance();
          myRef = database.getReference("chittagong");
 
-
-         firebaseFirestore = FirebaseFirestore.getInstance();
+       //  firebaseFirestore = FirebaseFirestore.getInstance();
 
 
         lvInternalStorage = (ListView) findViewById(R.id.lvInternalStorage);
@@ -125,41 +130,33 @@ public class ExcelReadActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 lastDirectory = pathHistory.get(count);
+
                 if(lastDirectory.equals(adapterView.getItemAtPosition(i))){
                     Log.d(TAG, "lvInternalStorage: Selected a file for upload: " + lastDirectory);
 
-                   // final ProgressDialog dialog= ProgressDialog.show(ExcelReadActivity.this,"Reading Excel File", "Please wait....",true);
-
-                   showprogessdialog("Reading Excel File");
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Log.d(TAG, "Excel Reading thread start.....");
-                            //Execute method for reading the excel data.
-                            //readExcelData(lastDirectory);
-                            readExcelFileFromAssets(lastDirectory);
+                  // final ProgressDialog dialog= ProgressDialog.show(ExcelReadActivity.this,"Reading Excel File", "Please wait....",true);
 
 
+                    readExcelFileFromAssets(lastDirectory);
 
-                            serilizeReport();
+                   // dialog.dismiss();
 
-                            hiddenProgressDialog();
+//                    Intent intent = new Intent(getApplicationContext(), ChittagongActivity.class);
+//                    startActivity(intent);
 
-                            Intent intent = new Intent(getApplicationContext(), ChittagongActivity.class);
-                            startActivity(intent);
-
-                            //dialog.dismiss();
-
-                        }
-                    }).start();
-
+//                    new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            Log.d(TAG, "Excel Reading thread start.....");
+//
+//                        }
+//                    }).start();
                     //TODO go for next
-
-                }else
-                {
+                }else{
                     count++;
                     pathHistory.add(count,(String) adapterView.getItemAtPosition(i));
                     checkInternalStorage();
+                    Toast.makeText(ExcelReadActivity.this, "Try Again!", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "lvInternalStorage: " + pathHistory.get(count));
                 }
             }
@@ -196,9 +193,6 @@ public class ExcelReadActivity extends BaseActivity {
 
 
     }
-
-
-
 
     private void checkInternalStorage() {
         Log.d(TAG, "checkInternalStorage: Started.");
@@ -262,112 +256,86 @@ public class ExcelReadActivity extends BaseActivity {
     }
 
     public void readExcelFileFromAssets(String filePath) {
+
+        final ProgressDialog dialog= ProgressDialog.show(ExcelReadActivity.this,"Reading Excel File", "Please wait....",true);
         uploadData = new ArrayList<Report>();
         allreport = new ArrayList<>();
         File inputFile = new File(filePath);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "Excel Reading thread start.....");
 
+                try {
+                    //InputStream myInput;
+                    InputStream inputStream = new FileInputStream(inputFile);
+                    POIFSFileSystem myFileSystem = new POIFSFileSystem(inputStream);
+                    HSSFWorkbook myWorkBook = new HSSFWorkbook(myFileSystem);
+                    HSSFSheet mySheet = myWorkBook.getSheetAt(0);
+                    Iterator<Row> rowIter = mySheet.rowIterator();
+                    int rowno =0;
 
-        try {
-            //InputStream myInput;
-            InputStream inputStream = new FileInputStream(inputFile);
-            POIFSFileSystem myFileSystem = new POIFSFileSystem(inputStream);
-            HSSFWorkbook myWorkBook = new HSSFWorkbook(myFileSystem);
-            HSSFSheet mySheet = myWorkBook.getSheetAt(0);
-            Iterator<Row> rowIter = mySheet.rowIterator();
-            int rowno =0;
-            while (rowIter.hasNext()) {
-               // Log.e(TAG, " row no "+ rowno );
-                HSSFRow myRow = (HSSFRow) rowIter.next();
-                if(rowno >=2) {
-                    Iterator<Cell> cellIter = myRow.cellIterator();
-                    int colno =0;
-                    String a="",b="",c="",d="",e="",f = "",g="",h="",I="",j="",k="";
-                    int tr;
-                    while (cellIter.hasNext()) {
-                        HSSFCell myCell = (HSSFCell) cellIter.next();
-                        if (colno==0){
-                            a = myCell.toString();
+                    while (rowIter.hasNext()) {
+                        // Log.e(TAG, " row no "+ rowno );
+                        HSSFRow myRow = (HSSFRow) rowIter.next();
+                        if(rowno >=2) {
+                            Iterator<Cell> cellIter = myRow.cellIterator();
+                            int colno =0;
+                            String a="",b="",c="",d="",e="",f = "",g="",h="",I="",j="",k="";
+                            int tr;
+                            while (cellIter.hasNext()) {
+                                HSSFCell myCell = (HSSFCell) cellIter.next();
+                                if (colno==0){
+                                    a = myCell.toString();
 
-                        }else if (colno==1){
-                            b = myCell.toString();
-                        }else if (colno==2){
-                            c = myCell.toString();
-                        }else if (colno==3){
-                            d = myCell.toString();
-                        }else if (colno==4){
-                            e = myCell.toString();
-                        }else if (colno==5){
-                            f = myCell.toString();
-                        }else if (colno==6){
-                            g = myCell.toString();
-                        }else if (colno==7){
-                            h = myCell.toString();
-                        }else if (colno==8){
-                            I = myCell.toString();
-                        }else if (colno==9){
-                            j = myCell.toString();
-                        }else if (colno==10){
-                            k = myCell.toString();
+                                }else if (colno==1){
+                                    b = myCell.toString();
+                                }else if (colno==2){
+                                    c = myCell.toString();
+                                }else if (colno==3){
+                                    d = myCell.toString();
+                                }else if (colno==4){
+                                    e = myCell.toString();
+                                }else if (colno==5){
+                                    f = myCell.toString();
+                                }else if (colno==6){
+                                    g = myCell.toString();
+                                }else if (colno==7){
+                                    h = myCell.toString();
+                                }else if (colno==8){
+                                    I = myCell.toString();
+                                }else if (colno==9){
+                                    j = myCell.toString();
+                                }else if (colno==10){
+                                    k = myCell.toString();
+                                }
+                                colno++;
+                                // Log.e(TAG, " Index :" + myCell.getColumnIndex() + " -- " + myCell.toString());
+                            }
+                            //Log.d(TAG, a + " -- "+ b+ "  -- "+ c+"  -- "+ d+"  -- "+ e+"  -- "+ f+"  -- "+ g+"  -- "+ h+"  -- "+ I+"  -- "+ j+"  -- "+ k+"\n");
+                            Report report = new Report(String.valueOf(a),String.valueOf(b),String.valueOf(c),String.valueOf(d),String.valueOf(e),String.valueOf(f),String.valueOf(g),
+                                    String.valueOf(h),String.valueOf(I),String.valueOf(j),String.valueOf(k));
+                            if (report.getDateTime().isEmpty()){
+
+                            }else {
+
+                                uploadData.add(report);
+                                Log.e("Readed :", String.valueOf(uploadData.size()));
+                                //allreport.add(report);
+                            }
                         }
-                        colno++;
-                       // Log.e(TAG, " Index :" + myCell.getColumnIndex() + " -- " + myCell.toString());
+                        rowno++;
                     }
-                    //Log.d(TAG, a + " -- "+ b+ "  -- "+ c+"  -- "+ d+"  -- "+ e+"  -- "+ f+"  -- "+ g+"  -- "+ h+"  -- "+ I+"  -- "+ j+"  -- "+ k+"\n");
-                        Report report = new Report(String.valueOf(a),String.valueOf(b),String.valueOf(c),String.valueOf(d),String.valueOf(e),String.valueOf(f),String.valueOf(g),
-                                String.valueOf(h),String.valueOf(I),String.valueOf(j),String.valueOf(k));
-                        if (report.getDateTime().isEmpty()){
-//
-                        }else {
-
-//                            String test = report.getAxleWiseWeight();
-//                            if (test.isEmpty()){
-//                                //ctrlRreport.add(report);
-//                                Log.e(TAG, report.getTransactionNumber());
-//
-//                            }else {
-//                                //uploadReport.add(report);
-//
-//                            }
-                            uploadData.add(report);
-                            //allreport.add(report);
-                       }
+                } catch (Exception e) {
+                    Log.e(TAG, "error "+ e.toString());
                 }
-                rowno++;
+                dialog.dismiss();
+                serilizeReport();
             }
-        } catch (Exception e) {
-            Log.e(TAG, "error "+ e.toString());
-        }
-
-        //myRef.child(thisDate).child("ctrlReport").updateChildren(map);
-
+        }).start();
         Log.e(TAG, "report size "+ uploadData.size());
 
-      //  Log.e(TAG, "report size "+ ctrlRreport.size());
 
-//
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                Log.d(TAG, "Firebase Report-1 upload thread start.....");
-//
-//                for (int i=0;i<uploadReport.size();i++){
-//                    Log.e(TAG, String.valueOf(i));
-//                    Report report = uploadReport.get(i);
-//                    myRef.child(thisDate).child("RegularReport").child(String.valueOf(i)).setValue(report);
-//                    reportHashMap.put(String.valueOf(i), report);
-//
-//                }
-//
-//            }
-//        }).start();
-//
-//        for (int i=0;i<ctrlRreport.size();i++){
-//            Log.e(TAG, String.valueOf(i));
-//            Report report = ctrlRreport.get(i);
-//            myRef.child(thisDate).child("ctrlReport").child(String.valueOf(i)).setValue(report);
-//
-//
-//        }
 
     }
 
@@ -408,13 +376,13 @@ public class ExcelReadActivity extends BaseActivity {
 
     private void serilizeReport() {
 
+       // showprogessdialog("serialize Data ");
 
         uploadReport = new ArrayList<>();
         ctrlRreport = new ArrayList<>();
 
             for (Report report : uploadData){
 
-                String t = report.getTotalWeight();
                 String a = report.getAxleWiseWeight();
                 if (a.isEmpty() || a.equals("0.0")){
                     Log.e(TAG, report.getTransactionNumber());
@@ -423,16 +391,55 @@ public class ExcelReadActivity extends BaseActivity {
                     uploadReport.add(report);
                 }
             }
+
+            //hiddenProgressDialog();
         Log.e(TAG, String.valueOf("All report: "+uploadData.size()));
         Log.e(TAG, String.valueOf("Crtl+R report: "+ctrlRreport.size()));
         Log.e(TAG, String.valueOf("Regular report: "+uploadReport.size()));
 
+        //todo show alart dialog
+        String msg = "All report: "+uploadData.size()+
+                ",    Crtl+R report: "+ctrlRreport.size()+",     Regular report: "+uploadReport.size();
 
-        String msg = "All report: "+uploadData.size()+"Crtl+R report: "+ctrlRreport.size()+"Regular report: "+uploadReport.size();
-        uploadRepoert();
+
+
+
+        ExcelReadActivity.this.runOnUiThread(new Runnable() {
+            public void run() {
+                showAlertWithOKClick("Excel", msg);
+            }
+        });
+
+
+    }
+
+    public void showAlertWithOKClick(String title_str, String message) {
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                this);
+        alertDialogBuilder.setTitle(title_str);
+        alertDialogBuilder.setMessage(message).setPositiveButton("Upload Report", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+
+                Toast.makeText(ExcelReadActivity.this, "nice", Toast.LENGTH_SHORT).show();
+                    uploadRepoert();
+            }
+        });
+        alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.setCancelable(false);
+        alertDialog.show();
     }
 
     private void uploadRepoert() {
+
+        showprogessdialog("Report Uploaded to server");
 
         new Thread(new Runnable() {
             @Override
@@ -446,7 +453,9 @@ public class ExcelReadActivity extends BaseActivity {
                     reportHashMap.put(String.valueOf(i), report);
 
                 }
-
+                hiddenProgressDialog();
+                Intent intent = new Intent(ExcelReadActivity.this, ChittagongActivity.class);
+                startActivity(intent);
             }
         }).start();
 
@@ -455,9 +464,44 @@ public class ExcelReadActivity extends BaseActivity {
             Report report = ctrlRreport.get(i);
             myRef.child(thisDate).child("ctrlReport").child(String.valueOf(i)).setValue(report);
 
-
         }
+
+//        Short s = new Short(String.valueOf(uploadData.size()), String.valueOf(ctrlRreport.size()), String.valueOf(uploadReport.size()));
+//        myRef.child(thisDate).child("short").setValue(s);
+
+
+
 
     }
 
+
+    private void firestore(){
+        firebaseFirestore = FirebaseFirestore.getInstance();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "Firebase Report-1 upload thread start.....");
+
+                for (int i=0;i<uploadReport.size();i++){
+                    Log.e(TAG, String.valueOf(i));
+                    Report report = uploadReport.get(i);
+                    //myRef.child(thisDate).child("RegularReport").child(String.valueOf(i)).setValue(report);
+                    firebaseFirestore.collection("Chittagong").document(thisDate).collection("regularReport").document(String.valueOf(i)).set(report);
+
+
+                }
+
+            }
+        }).start();
+
+        for (int i=0;i<ctrlRreport.size();i++){
+            Log.e(TAG, String.valueOf(i));
+            Report report = ctrlRreport.get(i);
+            firebaseFirestore.collection("Chittagong").document(thisDate).collection("ctrlReport").document(String.valueOf(i)).set(report);
+
+        }
+
+
+    }
 }

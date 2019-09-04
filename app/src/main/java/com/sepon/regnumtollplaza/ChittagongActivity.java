@@ -14,23 +14,29 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.sepon.regnumtollplaza.admin.Report;
 import com.sepon.regnumtollplaza.ui.main.SectionsPagerAdapter;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class ChittagongActivity extends AppCompatActivity {
 
     String thisDate;
+    public static ArrayList<Report> regularReport2 = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chittagong);
+
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         ViewPager viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
+
 
         //FloatingActionButton fab = findViewById(R.id.fab);
 

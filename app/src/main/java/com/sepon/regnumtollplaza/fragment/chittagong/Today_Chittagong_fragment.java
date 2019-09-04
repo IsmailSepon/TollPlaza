@@ -3,6 +3,7 @@ package com.sepon.regnumtollplaza.fragment.chittagong;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,12 +22,20 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.sepon.regnumtollplaza.ChittagongActivity;
 import com.sepon.regnumtollplaza.R;
 import com.sepon.regnumtollplaza.admin.Report;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import static android.content.Context.MODE_PRIVATE;
+import static com.sepon.regnumtollplaza.ChittagongActivity.regularReport2;
 
 
 public class Today_Chittagong_fragment extends Fragment {
@@ -34,18 +43,24 @@ public class Today_Chittagong_fragment extends Fragment {
     RecyclerView recyclerView;
     CardView card2,card3,card4,card5,card6,card7;
     private TextView r1,r2,r3,r4,r5,r6,cr1,cr2,cr3,cr4,cr5,cr6;
-    private String a2,a3,a4,a5,a6,a7,at;
-    private String c2,c3,c4,c5,c6,c7,ct;
+    private String a2,a3,a4,a5,a6,a7;
+    private String c2,c3,c4,c5,c6,c7;
+    private int ct,rt;
 
     private String thisDate;
     private FirebaseDatabase database;
     private DatabaseReference databaseReference;
+    TextView today_toptext;
+    SharedPreferences shared;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.today_chittagong_fragment, container, false);
+        shared = this.getActivity().getSharedPreferences("report", MODE_PRIVATE);
+
+
 
         initilize(view);
 
@@ -128,7 +143,7 @@ public class Today_Chittagong_fragment extends Fragment {
                     totallaxel.add(report);
 
                 }
-                at = String.valueOf(totallaxel.size());
+                rt = totallaxel.size();
                 a2 = String.valueOf(regularReport2.size());
                 a3 = String.valueOf(regularReport3.size());
                 a4 = String.valueOf(regularReport4.size());
@@ -136,7 +151,7 @@ public class Today_Chittagong_fragment extends Fragment {
                 a6 = String.valueOf(regularReport6.size());
                 a7 = String.valueOf(regularReport7.size());
 
-                Log.e("totaltr", at);
+                Log.e("totaltr", String.valueOf(rt));
                 //toptext.setText("Total Axel Report: "+String.valueOf(regularReport.size()));
 
                 Log.e("axel2", a2);
@@ -176,6 +191,7 @@ public class Today_Chittagong_fragment extends Fragment {
          ArrayList<Report> ctrlReport5 = new ArrayList<>();
          ArrayList<Report> ctrlReport6 = new ArrayList<>();
          ArrayList<Report> ctrlReport7 = new ArrayList<>();
+         ArrayList<Report> allctrlReport = new ArrayList<>();
 
         Dialog dialog = ProgressDialog.show(getActivity(), "Getting Ctrl+R Report From Server", "Please wait...", true);
 
@@ -205,10 +221,10 @@ public class Today_Chittagong_fragment extends Fragment {
                         ctrlReport7.add(report);
                     }else {
 
-
                     }
 
-                    //ctrlReport.add(report);
+                    allctrlReport.add(report);
+                    ct = allctrlReport.size();
 
                 }
                 //Log.e("totaltr", String.valueOf(ctrlReport.size()));
@@ -237,6 +253,8 @@ public class Today_Chittagong_fragment extends Fragment {
                 Log.e("axel7", c7);
                 cr6.setText("Ctrl+R  : "+c7);
 
+                int tl = ct+rt;
+                today_toptext.setText("Total: "+tl+",    Total Crtl+R : "+ct+",      Total Regular : "+rt);
                 dialog.dismiss();
             }
             @Override
@@ -247,6 +265,8 @@ public class Today_Chittagong_fragment extends Fragment {
 
             }
         });
+
+        packagesharedPreferences(allctrlReport);
 
     }
 
@@ -273,8 +293,19 @@ public class Today_Chittagong_fragment extends Fragment {
         cr4 = view.findViewById(R.id.axectrl5Ramount);
         cr5 = view.findViewById(R.id.axectrl6Ramount);
         cr6 = view.findViewById(R.id.axectrl7Ramount);
+
+        today_toptext = view.findViewById(R.id.today_toptext);
     }
 
-
+    private void packagesharedPreferences(ArrayList<Report> allctrlReport) {
+        SharedPreferences.Editor editor = shared.edit();
+//        Set<Report> set = new HashSet<Report>();
+//        set.addAll(allctrlReport);
+        Gson gson = new Gson();
+        String json = gson.toJson(allctrlReport);
+        editor.putStringSet("DATE_LIST", Collections.singleton(json));
+        editor.apply();
+        Log.d("storesharedPreferences",""+json);
+    }
 
 }
