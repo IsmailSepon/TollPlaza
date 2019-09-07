@@ -19,6 +19,7 @@ import com.sepon.regnumtollplaza.fragment.chittagong.Today_Chittagong_fragment;
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
  * one of the sections/tabs/pages.
  */
+
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @StringRes

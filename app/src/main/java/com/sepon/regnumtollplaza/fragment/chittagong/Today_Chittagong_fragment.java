@@ -3,8 +3,10 @@ package com.sepon.regnumtollplaza.fragment.chittagong;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,24 +19,30 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.common.reflect.TypeToken;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.core.Repo;
 import com.google.gson.Gson;
 import com.sepon.regnumtollplaza.ChittagongActivity;
 import com.sepon.regnumtollplaza.R;
 import com.sepon.regnumtollplaza.admin.Report;
 
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static android.content.Context.MODE_PRIVATE;
+import static android.content.Context.MODE_WORLD_READABLE;
+import static androidx.constraintlayout.widget.Constraints.TAG;
 import static com.sepon.regnumtollplaza.ChittagongActivity.regularReport2;
 
 
@@ -47,26 +55,37 @@ public class Today_Chittagong_fragment extends Fragment {
     private String c2,c3,c4,c5,c6,c7;
     private int ct,rt;
 
-    private String thisDate;
+    private String thisDate, shareDate;
     private FirebaseDatabase database;
     private DatabaseReference databaseReference;
     TextView today_toptext;
-    SharedPreferences shared;
+    ArrayList<Report> allctrlReport;
+    ArrayList<Report> test;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.today_chittagong_fragment, container, false);
-        shared = this.getActivity().getSharedPreferences("report", MODE_PRIVATE);
 
 
 
         initilize(view);
-
         getDate();
+        shareDate = getstoreDatetosharepref();
 
-        isTodayReportAvillable();
+        if (thisDate.equals(shareDate)){
+            //todo load & check from sharepreferenced
+        }else {
+            //todo load & check from firebase
+            isTodayReportAvillable();
+        }
+
+       // loadReport("ctrl+R");
+       // test = new ArrayList<>();
+        // Log.e("test", String.valueOf(test.size()));
 
         return view;
     }
@@ -182,6 +201,7 @@ public class Today_Chittagong_fragment extends Fragment {
 
             }
         });
+
     }
 
     private void getCtrlRdata() {
@@ -192,6 +212,7 @@ public class Today_Chittagong_fragment extends Fragment {
          ArrayList<Report> ctrlReport6 = new ArrayList<>();
          ArrayList<Report> ctrlReport7 = new ArrayList<>();
          ArrayList<Report> allctrlReport = new ArrayList<>();
+        // allctrlReport = new ArrayList<>();
 
         Dialog dialog = ProgressDialog.show(getActivity(), "Getting Ctrl+R Report From Server", "Please wait...", true);
 
@@ -225,6 +246,7 @@ public class Today_Chittagong_fragment extends Fragment {
 
                     allctrlReport.add(report);
                     ct = allctrlReport.size();
+                    Log.e("report insert", String.valueOf(ct));
 
                 }
                 //Log.e("totaltr", String.valueOf(ctrlReport.size()));
@@ -256,6 +278,8 @@ public class Today_Chittagong_fragment extends Fragment {
                 int tl = ct+rt;
                 today_toptext.setText("Total: "+tl+",    Total Crtl+R : "+ct+",      Total Regular : "+rt);
                 dialog.dismiss();
+
+                saveArrayList(allctrlReport, "ctrl");
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -266,8 +290,7 @@ public class Today_Chittagong_fragment extends Fragment {
             }
         });
 
-        packagesharedPreferences(allctrlReport);
-
+        //saveReport("ctrl+R");
     }
 
     private void getDate() {
@@ -297,15 +320,51 @@ public class Today_Chittagong_fragment extends Fragment {
         today_toptext = view.findViewById(R.id.today_toptext);
     }
 
-    private void packagesharedPreferences(ArrayList<Report> allctrlReport) {
-        SharedPreferences.Editor editor = shared.edit();
-//        Set<Report> set = new HashSet<Report>();
-//        set.addAll(allctrlReport);
+    public void loadReport(String name){
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("daily Report", getActivity().MODE_PRIVATE);
         Gson gson = new Gson();
-        String json = gson.toJson(allctrlReport);
-        editor.putStringSet("DATE_LIST", Collections.singleton(json));
-        editor.apply();
-        Log.d("storesharedPreferences",""+json);
+        String json = sharedPreferences.getString(name, null);
+        Type type = new TypeToken<ArrayList<Report>>(){}.getType();
+        allctrlReport = gson.fromJson(json, type);
+        Log.e("sharedPreferences", String.valueOf(allctrlReport.size()));
+        if (allctrlReport == null || allctrlReport.size()==0){
+            Log.e("sharedPreferences", "null");
+            allctrlReport = new ArrayList<>();
+            isTodayReportAvillable();
+        }
+
+    }
+
+    public void saveArrayList(ArrayList<Report> list, String key){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = prefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        editor.putString(key, json);
+        editor.apply();     // This line is IMPORTANT !!!
+        test = getArrayList("ctrl");
+        Log.e("test", String.valueOf(test.size()));
+
+    }
+
+
+    public ArrayList<Report> getArrayList(String key){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        Gson gson = new Gson();
+        String json = prefs.getString(key, null);
+        Type type = new TypeToken<ArrayList<Report>>() {}.getType();
+        return gson.fromJson(json, type);
+    }
+
+    public void storeDatetosharepref(String date){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("date", date);
+    }
+
+    public String getstoreDatetosharepref(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        return prefs.getString("date", "");
     }
 
 }
