@@ -46,7 +46,7 @@ import static androidx.constraintlayout.widget.Constraints.TAG;
 import static com.sepon.regnumtollplaza.ChittagongActivity.regularReport2;
 
 
-public class Today_Chittagong_fragment extends Fragment {
+public class  Today_Chittagong_fragment extends Fragment {
 
     RecyclerView recyclerView;
     CardView card2,card3,card4,card5,card6,card7;
@@ -62,6 +62,9 @@ public class Today_Chittagong_fragment extends Fragment {
     ArrayList<Report> allctrlReport;
     ArrayList<Report> test;
 
+    private ArrayList<Report> ca2,ca3,ca4,ca5,ca6,ca7,catotal;
+    ArrayList<Report> ra2,ra3,ra4,ra5,ra6,ra7,ratotal;
+
 
 
     @Override
@@ -71,30 +74,42 @@ public class Today_Chittagong_fragment extends Fragment {
         View view = inflater.inflate(R.layout.today_chittagong_fragment, container, false);
 
 
-
         initilize(view);
-        getDate();
-        shareDate = getstoreDatetosharepref();
 
-        if (thisDate.equals(shareDate)){
-            //todo load & check from sharepreferenced
-        }else {
-            //todo load & check from firebase
-            isTodayReportAvillable();
+
+        shareDate = getstoreDatetosharepref();
+        Log.e("share ", shareDate);
+        if (shareDate.equals("")){
+            getDate();
+            storeDatetosharepref(thisDate);
+            Log.e("getDate ", thisDate);
+
         }
 
-       // loadReport("ctrl+R");
-       // test = new ArrayList<>();
-        // Log.e("test", String.valueOf(test.size()));
+
+        //Toast.makeText(getActivity(), shareDate, Toast.LENGTH_SHORT).show();
+//        if (thisDate.equals(shareDate)){
+//            //todo load & check from sharepreferenced
+//                getsharePreferencedata1();
+//                getsharePreferencedata2();
+//        }else {
+////            //todo load & check from firebase
+       //     isTodayReportAvillable();
+
+       // }
+
 
         return view;
     }
+
+
 
     private void isTodayReportAvillable() {
 
         database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference("chittagong").child(thisDate);
-        Dialog dialog = ProgressDialog.show(getActivity(), "Checking todays report", "Please wait...", true);
+        ProgressDialog dialog = ProgressDialog.show(getActivity(), "Checking todays report", "Please wait...", true);
+
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -110,6 +125,7 @@ public class Today_Chittagong_fragment extends Fragment {
                     }).start();
 
                     getCtrlRdata();
+                    storeDatetosharepref(thisDate);
 
                 }else {
                     dialog.dismiss();
@@ -191,7 +207,14 @@ public class Today_Chittagong_fragment extends Fragment {
                 Log.e("axel7", a7);
                 r6.setText("Regular : "+a7);
 
-
+                //store list to sharePreference
+                saveArrayList(totallaxel, "regular");
+                saveArrayList(regularReport2, "regularA2");
+                saveArrayList(regularReport3, "regularA3");
+                saveArrayList(regularReport4, "regularA4");
+                saveArrayList(regularReport5, "regularA5");
+                saveArrayList(regularReport6, "regularA6");
+                saveArrayList(regularReport7, "regularA7");
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -214,7 +237,7 @@ public class Today_Chittagong_fragment extends Fragment {
          ArrayList<Report> allctrlReport = new ArrayList<>();
         // allctrlReport = new ArrayList<>();
 
-        Dialog dialog = ProgressDialog.show(getActivity(), "Getting Ctrl+R Report From Server", "Please wait...", true);
+        ProgressDialog dialog = ProgressDialog.show(getActivity(), "Getting Ctrl+R Report From Server", "Please wait...", true);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = database.getReference("chittagong").child(thisDate).child("ctrlReport");
@@ -249,8 +272,7 @@ public class Today_Chittagong_fragment extends Fragment {
                     Log.e("report insert", String.valueOf(ct));
 
                 }
-                //Log.e("totaltr", String.valueOf(ctrlReport.size()));
-                //toptext.setText("Total ctrl+R Axel Report: "+String.valueOf(ctrlReport.size()));
+
                 c2  = String.valueOf(ctrlReport2.size());
                 Log.e("axel2", c2);
                 cr1.setText("Ctrl+R  : "+c2);
@@ -279,7 +301,14 @@ public class Today_Chittagong_fragment extends Fragment {
                 today_toptext.setText("Total: "+tl+",    Total Crtl+R : "+ct+",      Total Regular : "+rt);
                 dialog.dismiss();
 
+                //store list to sharePreference
                 saveArrayList(allctrlReport, "ctrl");
+                saveArrayList(ctrlReport2, "ctrlA2");
+                saveArrayList(ctrlReport3, "ctrlA3");
+                saveArrayList(ctrlReport4, "ctrlA4");
+                saveArrayList(ctrlReport5, "ctrlA5");
+                saveArrayList(ctrlReport6, "ctrlA6");
+                saveArrayList(ctrlReport7, "ctrlA7");
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -293,7 +322,7 @@ public class Today_Chittagong_fragment extends Fragment {
         //saveReport("ctrl+R");
     }
 
-    private void getDate() {
+    private void getDate(){
 
         SimpleDateFormat currentDate = new SimpleDateFormat("dd-MM-yyyy");
         Date todayDate = new Date();
@@ -320,21 +349,6 @@ public class Today_Chittagong_fragment extends Fragment {
         today_toptext = view.findViewById(R.id.today_toptext);
     }
 
-    public void loadReport(String name){
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("daily Report", getActivity().MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString(name, null);
-        Type type = new TypeToken<ArrayList<Report>>(){}.getType();
-        allctrlReport = gson.fromJson(json, type);
-        Log.e("sharedPreferences", String.valueOf(allctrlReport.size()));
-        if (allctrlReport == null || allctrlReport.size()==0){
-            Log.e("sharedPreferences", "null");
-            allctrlReport = new ArrayList<>();
-            isTodayReportAvillable();
-        }
-
-    }
-
     public void saveArrayList(ArrayList<Report> list, String key){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = prefs.edit();
@@ -342,8 +356,6 @@ public class Today_Chittagong_fragment extends Fragment {
         String json = gson.toJson(list);
         editor.putString(key, json);
         editor.apply();     // This line is IMPORTANT !!!
-        test = getArrayList("ctrl");
-        Log.e("test", String.valueOf(test.size()));
 
     }
 
@@ -357,9 +369,13 @@ public class Today_Chittagong_fragment extends Fragment {
     }
 
     public void storeDatetosharepref(String date){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("date", date);
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+//        SharedPreferences.Editor editor = prefs.edit();
+//        editor.putString("date", date);
+//        editor.commit();
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("date", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("date", date).apply();
     }
 
     public String getstoreDatetosharepref(){
@@ -367,4 +383,85 @@ public class Today_Chittagong_fragment extends Fragment {
         return prefs.getString("date", "");
     }
 
+    private void getsharePreferencedata2() {
+        ca2 = new ArrayList<>();
+        ca2 = getArrayList("ctrlA2");
+
+        ca3 = new ArrayList<>();
+        ca3 = getArrayList("ctrlA3");
+
+        ca4 = new ArrayList<>();
+        ca4 = getArrayList("ctrlA4");
+
+        ca5 = new ArrayList<>();
+        ca5 = getArrayList("ctrlA5");
+
+        ca6 = new ArrayList<>();
+        ca6 = getArrayList("ctrlA6");
+
+        ca7 = new ArrayList<>();
+        ca7 = getArrayList("ctrlA7");
+
+        catotal = new ArrayList<>();
+        catotal = getArrayList("ctrl");
+
+        c2 = String.valueOf(ca2.size());
+        c3 = String.valueOf(ca3.size());
+        c4 = String.valueOf(ca4.size());
+        c5 = String.valueOf(ca5.size());
+        c6 = String.valueOf(ca6.size());
+        c7 = String.valueOf(ca7.size());
+        ct = catotal.size();
+        int tl = ct+rt;
+
+
+        today_toptext.setText("Total: "+tl+",    Total Crtl+R : "+ct+",      Total Regular : "+rt);
+        cr1.setText("Ctrl+R  : "+c2);
+        cr2.setText("Ctrl+R  : "+c3);
+        cr3.setText("Ctrl+R  : "+c4);
+        cr4.setText("Ctrl+R  : "+c5);
+        cr5.setText("Ctrl+R  : "+c6);
+        cr6.setText("Ctrl+R  : "+c7);
+
+    }
+
+    private void getsharePreferencedata1() {
+        ra2 = new ArrayList<>();
+        ra2 = getArrayList("regularA2");
+
+        ra3 = new ArrayList<>();
+        ra3 = getArrayList("regularA3");
+
+        ra4 = new ArrayList<>();
+        ra4 = getArrayList("regularA4");
+
+        ra5 = new ArrayList<>();
+        ra5 = getArrayList("regularA5");
+
+        ra6 = new ArrayList<>();
+        ra6 = getArrayList("regularA6");
+
+        ra7 = new ArrayList<>();
+        ra7 = getArrayList("regularA7");
+
+        ratotal = new ArrayList<>();
+        ratotal = getArrayList("regular");
+
+        rt = ratotal.size();
+        a2 = String.valueOf(ra2.size());
+        a3 = String.valueOf(ra3.size());
+        a4 = String.valueOf(ra4.size());
+        a5 = String.valueOf(ra5.size());
+        a6 = String.valueOf(ra6.size());
+        a7 = String.valueOf(ra7.size());
+
+
+        r1.setText("Regular : "+a2);
+        r2.setText("Regular : "+a3);
+        r3.setText("Regular : "+a4);
+        r4.setText("Regular : "+a5);
+        r5.setText("Regular : "+a6);
+        r6.setText("Regular : "+a7);
+
+       }
 }

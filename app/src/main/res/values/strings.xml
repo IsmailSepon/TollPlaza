@@ -17,4 +17,7 @@
     <string name="cht2">This Month</string>
     <string name="title_activity_chittagong">ChittagongActivity</string>
     <string name="_2_axel">2 Axel</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

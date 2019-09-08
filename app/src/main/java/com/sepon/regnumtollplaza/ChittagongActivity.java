@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.sepon.regnumtollplaza.adapter.MyAdapter;
 import com.sepon.regnumtollplaza.admin.Report;
 import com.sepon.regnumtollplaza.ui.main.SectionsPagerAdapter;
 
@@ -24,6 +25,10 @@ import java.util.Date;
 public class ChittagongActivity extends AppCompatActivity {
 
     String thisDate;
+    TabLayout tabLayout;
+    ViewPager viewPager;
+
+
     public static ArrayList<Report> regularReport2 = new ArrayList<>();
 
     @Override
@@ -31,21 +36,37 @@ public class ChittagongActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chittagong);
 
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
-        ViewPager viewPager = findViewById(R.id.view_pager);
-        viewPager.setAdapter(sectionsPagerAdapter);
-        TabLayout tabs = findViewById(R.id.tabs);
-        tabs.setupWithViewPager(viewPager);
+        tabLayout=findViewById(R.id.tabs_ch);
+        viewPager=findViewById(R.id.view_pager_ch);
 
 
-        //FloatingActionButton fab = findViewById(R.id.fab);
+        tabLayout.addTab(tabLayout.newTab().setText("Today"));
+        tabLayout.addTab(tabLayout.newTab().setText("This Week"));
+        tabLayout.addTab(tabLayout.newTab().setText("This Month"));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+
+        final MyAdapter adapter = new MyAdapter(this,getSupportFragmentManager(), tabLayout.getTabCount());
+        viewPager.setAdapter(adapter);
+
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
     }
 }
