@@ -9,10 +9,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.sepon.regnumtollplaza.R;
-import com.sepon.regnumtollplaza.fragment.Previous_fragment;
-import com.sepon.regnumtollplaza.fragment.Today_Fragment;
-import com.sepon.regnumtollplaza.fragment.chittagong.CtrlR_fragment;
-import com.sepon.regnumtollplaza.fragment.chittagong.Regular_fragment;
 import com.sepon.regnumtollplaza.fragment.chittagong.Today_Chittagong_fragment;
 
 /**
@@ -39,12 +35,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 Today_Chittagong_fragment tab3 = new Today_Chittagong_fragment();
                 return tab3;
-            case 1:
-                Regular_fragment tab1 = new Regular_fragment();
-                return tab1;
-            case 2:
-                CtrlR_fragment tab2 = new CtrlR_fragment();
-                return tab2;
+
             default:
                 return null;
         }

@@ -48,7 +48,6 @@ import static com.sepon.regnumtollplaza.ChittagongActivity.regularReport2;
 
 public class  Today_Chittagong_fragment extends Fragment {
 
-    RecyclerView recyclerView;
     CardView card2,card3,card4,card5,card6,card7;
     private TextView r1,r2,r3,r4,r5,r6,cr1,cr2,cr3,cr4,cr5,cr6;
     private String a2,a3,a4,a5,a6,a7;
@@ -76,33 +75,21 @@ public class  Today_Chittagong_fragment extends Fragment {
 
         initilize(view);
 
-
-        shareDate = getstoreDatetosharepref();
+        getDate();
+        getstoreDatetosharepref();
         Log.e("share ", shareDate);
-        if (shareDate.equals("")){
-            getDate();
-            storeDatetosharepref(thisDate);
-            Log.e("getDate ", thisDate);
+
+        if (thisDate.equals(shareDate)){
+            //todo load & check from sharepreferenced
+                getsharePreferencedata1();
+                getsharePreferencedata2();
+        }else {
+//            //todo load & check from firebase
+            isTodayReportAvillable();
 
         }
-
-
-        //Toast.makeText(getActivity(), shareDate, Toast.LENGTH_SHORT).show();
-//        if (thisDate.equals(shareDate)){
-//            //todo load & check from sharepreferenced
-//                getsharePreferencedata1();
-//                getsharePreferencedata2();
-//        }else {
-////            //todo load & check from firebase
-       //     isTodayReportAvillable();
-
-       // }
-
-
         return view;
     }
-
-
 
     private void isTodayReportAvillable() {
 
@@ -359,7 +346,6 @@ public class  Today_Chittagong_fragment extends Fragment {
 
     }
 
-
     public ArrayList<Report> getArrayList(String key){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         Gson gson = new Gson();
@@ -369,18 +355,21 @@ public class  Today_Chittagong_fragment extends Fragment {
     }
 
     public void storeDatetosharepref(String date){
-//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-//        SharedPreferences.Editor editor = prefs.edit();
-//        editor.putString("date", date);
-//        editor.commit();
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("date", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("date", date).apply();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("date", date);
+        editor.apply();
+
+
+//        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("date", Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = sharedPreferences.edit();
+//        editor.putString("date", date).apply();
     }
 
-    public String getstoreDatetosharepref(){
+    public void getstoreDatetosharepref(){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        return prefs.getString("date", "");
+        shareDate = prefs.getString("date", "");
+
     }
 
     private void getsharePreferencedata2() {
@@ -416,12 +405,12 @@ public class  Today_Chittagong_fragment extends Fragment {
 
 
         today_toptext.setText("Total: "+tl+",    Total Crtl+R : "+ct+",      Total Regular : "+rt);
-        cr1.setText("Ctrl+R  : "+c2);
-        cr2.setText("Ctrl+R  : "+c3);
-        cr3.setText("Ctrl+R  : "+c4);
-        cr4.setText("Ctrl+R  : "+c5);
-        cr5.setText("Ctrl+R  : "+c6);
-        cr6.setText("Ctrl+R  : "+c7);
+        cr1.setText("Ctrl+R   : "+c2);
+        cr2.setText("Ctrl+R   : "+c3);
+        cr3.setText("Ctrl+R   : "+c4);
+        cr4.setText("Ctrl+R   : "+c5);
+        cr5.setText("Ctrl+R   : "+c6);
+        cr6.setText("Ctrl+R   : "+c7);
 
     }
 

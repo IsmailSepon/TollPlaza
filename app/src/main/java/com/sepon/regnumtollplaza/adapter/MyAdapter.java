@@ -1,6 +1,7 @@
 package com.sepon.regnumtollplaza.adapter;
 
 import android.content.Context;
+import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -14,7 +15,7 @@ public class MyAdapter  extends FragmentPagerAdapter {
     private Context myContext;
     int totalTabs;
 
-    public MyAdapter(Context context, FragmentManager fm, int totalTabs) {
+    public MyAdapter(Context context, FragmentManager fm, int totalTabs){
         super(fm);
         myContext = context;
         this.totalTabs = totalTabs;
@@ -26,14 +27,12 @@ public class MyAdapter  extends FragmentPagerAdapter {
         switch (position) {
             case 0:
                 Today_Chittagong_fragment homeFragment = new Today_Chittagong_fragment();
+               
                 return homeFragment;
             case 1:
-
                 Marriage_fragment sportFragment = new Marriage_fragment();
                 return sportFragment;
-            case 2:
-                Marriage_fragment movieFragment = new Marriage_fragment();
-                return movieFragment;
+
             default:
                 return null;
         }
