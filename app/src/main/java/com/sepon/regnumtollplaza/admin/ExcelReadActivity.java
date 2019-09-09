@@ -466,14 +466,12 @@ public class ExcelReadActivity extends BaseActivity {
 
         }
 
-//        Short s = new Short(String.valueOf(uploadData.size()), String.valueOf(ctrlRreport.size()), String.valueOf(uploadReport.size()));
-//        myRef.child(thisDate).child("short").setValue(s);
-
-
+        // this short info just for previous view
+        Short s = new Short(String.valueOf(uploadData.size()), String.valueOf(ctrlRreport.size()), String.valueOf(uploadReport.size()));
+        myRef.child(thisDate).child("short").setValue(s);
 
 
     }
-
 
     private void firestore(){
         firebaseFirestore = FirebaseFirestore.getInstance();
