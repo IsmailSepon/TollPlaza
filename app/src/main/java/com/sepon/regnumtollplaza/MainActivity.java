@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         plazalist.add(plaza);
         plazalist.add(plaza1);
         plazalist.add(plaza3);
-        mPlazaAdapter = new PlazaAdapter(plazalist, getApplicationContext());
+        mPlazaAdapter = new PlazaAdapter(plazalist, MainActivity.this);
         recyclerView.setAdapter(mPlazaAdapter);
 
     }
