@@ -3,8 +3,6 @@
     xmlns:dist="http://schemas.android.com/apk/distribution"
     package="com.sepon.regnumtollplaza">
 
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-
     <application
         android:allowBackup="true"
         android:icon="@drawable/logo"
@@ -12,11 +10,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".admin.ReportUploadActivity"></activity>
+        <activity android:name=".admin.DelateActivity"></activity>
+        <activity android:name=".admin.ReportUploadActivity" />
         <activity
             android:name=".ChittagongActivity"
             android:label="@string/title_activity_chittagong"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".admin.AddUserActivity"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -43,8 +42,9 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <dist:module dist:instant="true" />
 

@@ -361,6 +361,13 @@ public class ExcelReadActivity extends BaseActivity {
                 logout();
                 return true;
 
+            case R.id.delate:
+                // write your code here
+
+                Intent i = new Intent(getApplicationContext(), DelateActivity.class);
+                startActivity(i);
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }

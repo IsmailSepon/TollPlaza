@@ -7,4 +7,7 @@
 
         <item android:title="Log Out"
             android:id="@+id/logout"/>
+
+        <item android:title="Delate previous"
+            android:id="@+id/delate"/>
 </menu>
