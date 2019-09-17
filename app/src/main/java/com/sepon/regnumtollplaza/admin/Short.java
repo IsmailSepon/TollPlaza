@@ -6,6 +6,8 @@ public class Short {
     String ctrlR;
     String regular;
 
+    public Short(){}
+
     public Short(String total, String ctrlR, String regular) {
         this.total = total;
         this.ctrlR = ctrlR;

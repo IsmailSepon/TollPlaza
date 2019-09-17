@@ -359,17 +359,11 @@ public class  Today_Chittagong_fragment extends Fragment {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("date", date);
         editor.apply();
-
-
-//        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("date", Context.MODE_PRIVATE);
-//        SharedPreferences.Editor editor = sharedPreferences.edit();
-//        editor.putString("date", date).apply();
     }
 
     public void getstoreDatetosharepref(){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         shareDate = prefs.getString("date", "");
-
     }
 
     private void getsharePreferencedata2() {

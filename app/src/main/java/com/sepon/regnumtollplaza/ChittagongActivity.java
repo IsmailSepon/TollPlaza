@@ -42,7 +42,7 @@ public class ChittagongActivity extends AppCompatActivity {
 
 
         tabLayout.addTab(tabLayout.newTab().setText("Today"));
-        tabLayout.addTab(tabLayout.newTab().setText("Previous"));
+        tabLayout.addTab(tabLayout.newTab().setText("This Week"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
 

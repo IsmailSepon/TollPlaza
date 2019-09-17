@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.sepon.regnumtollplaza.fragment.Marriage_fragment;
+import com.sepon.regnumtollplaza.fragment.chittagong.Regular_fragment;
 import com.sepon.regnumtollplaza.fragment.chittagong.Today_Chittagong_fragment;
 
 public class MyAdapter  extends FragmentPagerAdapter {
@@ -30,7 +31,7 @@ public class MyAdapter  extends FragmentPagerAdapter {
                
                 return homeFragment;
             case 1:
-                Marriage_fragment sportFragment = new Marriage_fragment();
+                Regular_fragment sportFragment = new Regular_fragment();
                 return sportFragment;
 
             default:
