@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.core.Repo;
 import com.google.gson.Gson;
+import com.sepon.regnumtollplaza.AxelDetailsActivity;
 import com.sepon.regnumtollplaza.ChittagongActivity;
 import com.sepon.regnumtollplaza.R;
 import com.sepon.regnumtollplaza.admin.Report;
@@ -46,7 +49,7 @@ import static androidx.constraintlayout.widget.Constraints.TAG;
 import static com.sepon.regnumtollplaza.ChittagongActivity.regularReport2;
 
 
-public class  Today_Chittagong_fragment extends Fragment {
+public class  Today_Chittagong_fragment extends Fragment implements View.OnClickListener {
 
     CardView card2,card3,card4,card5,card6,card7;
     private TextView r1,r2,r3,r4,r5,r6,cr1,cr2,cr3,cr4,cr5,cr6;
@@ -88,6 +91,8 @@ public class  Today_Chittagong_fragment extends Fragment {
             isTodayReportAvillable();
 
         }
+
+        initizCard(view);
         return view;
     }
 
@@ -447,4 +452,56 @@ public class  Today_Chittagong_fragment extends Fragment {
         r6.setText("Regular : "+a7);
 
        }
+
+
+      public void initizCard(View view){
+        card2 = view.findViewById(R.id.c2);
+            card2.setOnClickListener(this);
+        card3 = view.findViewById(R.id.c3);
+          card3.setOnClickListener(this);
+        card4 = view.findViewById(R.id.c4);
+          card4.setOnClickListener(this);
+        card5 = view.findViewById(R.id.c5);
+          card5.setOnClickListener(this);
+        card6 = view.findViewById(R.id.c6);
+          card6.setOnClickListener(this);
+        card7 = view.findViewById(R.id.c7);
+          card7.setOnClickListener(this);
+
+
+      }
+
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()){
+            case R.id.c2:
+                axelDetailsActivity("regularA2");
+                break;
+            case R.id.c3:
+                axelDetailsActivity("regularA3");
+                break;
+            case R.id.c4:
+                axelDetailsActivity("regularA4");
+                break;
+            case R.id.c5:
+                axelDetailsActivity("regularA5");
+                break;
+            case R.id.c6:
+                axelDetailsActivity("regularA6");
+                break;
+            case R.id.c7:
+                axelDetailsActivity("regularA7");
+                break;
+        }
+
+    }
+
+
+    public void axelDetailsActivity(String axel){
+
+        Intent i = new Intent(getActivity(), AxelDetailsActivity.class);
+        i.putExtra("axel", axel);
+        startActivity(i);
+    }
 }
