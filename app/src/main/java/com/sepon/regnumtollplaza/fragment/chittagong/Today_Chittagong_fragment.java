@@ -476,22 +476,22 @@ public class  Today_Chittagong_fragment extends Fragment implements View.OnClick
 
         switch (v.getId()){
             case R.id.c2:
-                axelDetailsActivity("regularA2");
+                axelDetailsActivity("ctrlA2");
                 break;
             case R.id.c3:
-                axelDetailsActivity("regularA3");
+                axelDetailsActivity("ctrlA3");
                 break;
             case R.id.c4:
-                axelDetailsActivity("regularA4");
+                axelDetailsActivity("ctrlA4");
                 break;
             case R.id.c5:
-                axelDetailsActivity("regularA5");
+                axelDetailsActivity("ctrlA5");
                 break;
             case R.id.c6:
-                axelDetailsActivity("regularA6");
+                axelDetailsActivity("ctrlA6");
                 break;
             case R.id.c7:
-                axelDetailsActivity("regularA7");
+                axelDetailsActivity("ctrlA7");
                 break;
         }
 
