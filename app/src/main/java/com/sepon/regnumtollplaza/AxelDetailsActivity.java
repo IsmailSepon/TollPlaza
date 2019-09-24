@@ -40,7 +40,6 @@ public class AxelDetailsActivity extends AppCompatActivity {
         recyclerView.setAdapter(axelAdapter);
 
 
-
     }
 
     public ArrayList<Report> getArrayList(String key){

@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.sepon.regnumtollplaza.fragment.Marriage_fragment;
+import com.sepon.regnumtollplaza.fragment.chittagong.Graph_fragment;
 import com.sepon.regnumtollplaza.fragment.chittagong.Regular_fragment;
 import com.sepon.regnumtollplaza.fragment.chittagong.Today_Chittagong_fragment;
 
@@ -33,6 +34,10 @@ public class MyAdapter  extends FragmentPagerAdapter {
             case 1:
                 Regular_fragment sportFragment = new Regular_fragment();
                 return sportFragment;
+
+            case 2:
+                Graph_fragment graph = new Graph_fragment();
+                return graph;
 
             default:
                 return null;
