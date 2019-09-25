@@ -11,7 +11,7 @@
         android:layout_gravity="center_horizontal"
         android:textAlignment="center"
         android:padding="5dp"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textColor="@color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -80,7 +80,7 @@
                           android:layout_height="wrap_content"
                           android:layout_gravity="center_vertical"
                           android:textColor="@color/green"
-                          android:textSize="22sp"
+                          android:textSize="18sp"
                           android:layout_marginBottom="5dp"/>
 
 
@@ -89,7 +89,7 @@
                           android:layout_width="match_parent"
                           android:layout_height="wrap_content"
                           android:textColor="@color/sky"
-                          android:textSize="22sp"  />
+                          android:textSize="18sp"  />
 
                   </LinearLayout>
 
@@ -152,7 +152,7 @@
                           android:layout_height="wrap_content"
                           android:layout_gravity="center_vertical"
                           android:textColor="@color/green"
-                          android:textSize="22sp"
+                          android:textSize="18sp"
                           android:layout_marginBottom="5dp"/>
 
 
@@ -161,7 +161,7 @@
                           android:layout_width="match_parent"
                           android:layout_height="wrap_content"
                           android:textColor="@color/sky"
-                          android:textSize="22sp"  />
+                          android:textSize="18sp"  />
 
                   </LinearLayout>
 
@@ -223,7 +223,7 @@
                           android:layout_height="wrap_content"
                           android:layout_gravity="center_vertical"
                           android:textColor="@color/green"
-                          android:textSize="22sp"
+                          android:textSize="18sp"
                           android:layout_marginBottom="5dp"/>
 
 
@@ -232,7 +232,7 @@
                           android:layout_width="match_parent"
                           android:layout_height="wrap_content"
                           android:textColor="@color/sky"
-                          android:textSize="22sp"  />
+                          android:textSize="18sp"  />
 
                   </LinearLayout>
 
@@ -296,7 +296,7 @@
                           android:layout_height="wrap_content"
                           android:layout_gravity="center_vertical"
                           android:textColor="@color/green"
-                          android:textSize="22sp"
+                          android:textSize="18sp"
                           android:layout_marginBottom="5dp"/>
 
 
@@ -305,7 +305,7 @@
                           android:layout_width="match_parent"
                           android:layout_height="wrap_content"
                           android:textColor="@color/sky"
-                          android:textSize="22sp"  />
+                          android:textSize="18sp"  />
 
                   </LinearLayout>
 
@@ -368,7 +368,7 @@
                           android:layout_height="wrap_content"
                           android:layout_gravity="center_vertical"
                           android:textColor="@color/green"
-                          android:textSize="22sp"
+                          android:textSize="18sp"
                           android:layout_marginBottom="5dp"/>
 
 
@@ -377,7 +377,7 @@
                           android:layout_width="match_parent"
                           android:layout_height="wrap_content"
                           android:textColor="@color/sky"
-                          android:textSize="22sp"  />
+                          android:textSize="18sp"  />
 
                   </LinearLayout>
 
@@ -441,7 +441,7 @@
                           android:layout_height="wrap_content"
                           android:layout_gravity="center_vertical"
                           android:textColor="@color/green"
-                          android:textSize="22sp"
+                          android:textSize="18sp"
                           android:layout_marginBottom="5dp"/>
 
 
@@ -450,7 +450,7 @@
                           android:layout_width="match_parent"
                           android:layout_height="wrap_content"
                           android:textColor="@color/sky"
-                          android:textSize="22sp"  />
+                          android:textSize="18sp"  />
 
                   </LinearLayout>
 

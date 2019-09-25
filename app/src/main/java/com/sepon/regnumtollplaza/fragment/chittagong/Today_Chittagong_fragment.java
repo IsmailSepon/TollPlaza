@@ -371,6 +371,7 @@ public class  Today_Chittagong_fragment extends Fragment implements View.OnClick
         shareDate = prefs.getString("date", "");
     }
 
+    @SuppressLint("SetTextI18n")
     private void getsharePreferencedata2() {
         ca2 = new ArrayList<>();
         ca2 = getArrayList("ctrlA2");
@@ -403,7 +404,7 @@ public class  Today_Chittagong_fragment extends Fragment implements View.OnClick
         int tl = ct+rt;
 
 
-        today_toptext.setText("Total: "+tl+",    Total Crtl+R : "+ct+",      Total Regular : "+rt);
+        today_toptext.setText("Total: "+tl+",   Crtl+R : "+ct+",   Regular : "+rt);
         cr1.setText("Ctrl+R   : "+c2);
         cr2.setText("Ctrl+R   : "+c3);
         cr3.setText("Ctrl+R   : "+c4);

@@ -1,71 +1,71 @@
 package com.sepon.regnumtollplaza.fragment.chittagong;
 
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-
 import androidx.fragment.app.Fragment;
 
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.series.BarGraphSeries;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 import com.sepon.regnumtollplaza.R;
+import com.sepon.regnumtollplaza.fragment.Previous_fragment;
+import com.sepon.regnumtollplaza.pojo.Previous_pojo;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
+import lecho.lib.hellocharts.model.PieChartData;
+import lecho.lib.hellocharts.model.SliceValue;
+import lecho.lib.hellocharts.view.PieChartView;
 
 public class Graph_fragment extends Fragment {
 
-    ArrayList<String> list;
+    List<SliceValue> pieData = new ArrayList<>();
 
-
+    ArrayList<Previous_pojo> list2; // = new ArrayList<>();
+    protected Typeface tfLight;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.grapg_fragment, container, false);
 
-        GraphView graph = (GraphView) view.findViewById(R.id.graph);
-        BarGraphSeries<DataPoint> series = new BarGraphSeries<DataPoint>(new DataPoint[] {
-                new DataPoint(2, 1),
-                new DataPoint(3, 5),
-                new DataPoint(4, 3),
-                new DataPoint(5, 2),
-                new DataPoint(6, 6),
+        list2 = new ArrayList<>();
+        PieChartView pieChartView = view.findViewById(R.id.piechart);
 
-                
-                new DataPoint(7, 6)
-        });
+        List pieData = new ArrayList<>();
+        list2 = getArrayList("previous_report");
 
-        graph.addSeries(series);
-
-
-        Button btn = view.findViewById(R.id.insert);
-        EditText rt = view.findViewById(R.id.get);
-        TextView tx = view.findViewById(R.id.text);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                String s = String.valueOf(rt.getText());
-                list = new ArrayList<>();
-                list.add(s+" new "+s);
-
-                tx.setText(list.get(0)+" size="+list.size());
-
+            for (int i=0; i<list2.size();i++){
+                int value = Integer.parseInt(list2.get(i).getCtrl());
+                String date = list2.get(i).getDate();
+                Random rnd = new Random();
+                int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+                pieData.add(new SliceValue(value, color).setLabel(value+"/"+date));
             }
-        });
+
+            PieChartData pieChartData = new PieChartData(pieData);
+            pieChartData.setHasLabels(true).setValueLabelTextSize(14);
+           // pieChartData.setHasCenterCircle(true).setCenterText1("Chorshinddu Axel").setCenterText1FontSize(20).setCenterText1Color(Color.parseColor("#0097A7"));
+            pieChartView.setPieChartData(pieChartData);
+
 
 
         return view;
     }
 
-
-
-
+    public ArrayList<Previous_pojo> getArrayList(String key){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        Gson gson = new Gson();
+        String json = prefs.getString(key, null);
+        Type type = new TypeToken<ArrayList<Previous_pojo>>() {}.getType();
+        return gson.fromJson(json, type);
+    }
 }

@@ -27,6 +27,8 @@ import com.sepon.regnumtollplaza.admin.Report;
 import com.sepon.regnumtollplaza.admin.Short;
 import com.sepon.regnumtollplaza.pojo.Previous_pojo;
 
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
+
 import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -71,17 +73,14 @@ public class Regular_fragment extends Fragment {
 
         }else {
             //todo load & check from firebase
-            list2.clear();
+
             Log.e(TAG, "Get data");
             for (int i=1; i<=7; i++){
                 String yes = yesterday(i);
                 getInfo(yes);
             }
-
+            saveArrayList(list, "previous_report");
         }
-
-
-
 
         return view;
     }
@@ -129,7 +128,7 @@ public class Regular_fragment extends Fragment {
                 }
                 adapter = new ChittagongPreviousAdapter(list, getActivity());
                 recyclerView.setAdapter(adapter);
-                saveArrayList(list, "previous_report");
+
             }
 
             @Override
