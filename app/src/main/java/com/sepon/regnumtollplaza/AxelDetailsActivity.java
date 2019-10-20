@@ -34,6 +34,7 @@ public class AxelDetailsActivity extends AppCompatActivity {
 
         axelList = new ArrayList<>();
         axelList = getArrayList(axel);
+        int t  = getArrayList(axel).size();
 
         recyclerView = findViewById(R.id.axel_recyclerview);
         axelAdapter = new AxelAdapter(axelList, AxelDetailsActivity.this);

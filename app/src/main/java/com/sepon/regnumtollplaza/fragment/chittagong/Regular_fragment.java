@@ -78,7 +78,10 @@ public class Regular_fragment extends Fragment {
             for (int i=1; i<=7; i++){
                 String yes = yesterday(i);
                 getInfo(yes);
-            }
+                 }
+            Log.e(TAG, "List size: "+list.size());
+            adapter = new ChittagongPreviousAdapter(list, getActivity());
+            recyclerView.setAdapter(adapter);
             saveArrayList(list, "previous_report");
         }
 
@@ -125,10 +128,12 @@ public class Regular_fragment extends Fragment {
 
                     Previous_pojo previous_pojo = new Previous_pojo(yes, ctrl, regular, total);
                     list.add(previous_pojo);
+
                 }
+                Log.e(TAG, yes+"/"+list.size());
                 adapter = new ChittagongPreviousAdapter(list, getActivity());
                 recyclerView.setAdapter(adapter);
-
+                saveArrayList(list, "previous_report");
             }
 
             @Override

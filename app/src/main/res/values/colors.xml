@@ -17,5 +17,11 @@
     <color name="gray">#CCCCCC</color>
     <color name="darkblue">#332683</color>
     <color name="blue">#2F45BE</color>
-
+    <color name="pie1">#E95B54</color>
+    <color name="pie2">#854E9B</color>
+    <color name="pie3">#309FDB</color>
+    <color name="pie4">#3CAF85</color>
+    <color name="pie5">#FBCE4A</color>
+    <color name="pie6">#B0B91F</color>
+    <color name="pie7">#CACACA</color>
 </resources>
