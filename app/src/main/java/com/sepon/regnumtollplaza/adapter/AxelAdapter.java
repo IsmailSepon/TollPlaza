@@ -47,7 +47,7 @@ public class AxelAdapter extends RecyclerView.Adapter<AxelAdapter.ToadyViewHolde
     public void onBindViewHolder(@NonNull AxelAdapter.ToadyViewHolder holder, int position) {
 
             holder.lane.setText(axellist.get(position).getLane());
-            holder.totalwise.setText(axellist.get(position).getTotalWeight());
+            holder.totalwise.setText(axellist.get(position).getDateTime());
             holder.vichelNumber.setText(axellist.get(position).getVehicleNumber());
             holder.tr.setText(axellist.get(position).getTransactionNumber());
 

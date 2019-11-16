@@ -37,14 +37,11 @@ import lecho.lib.hellocharts.view.PieChartView;
 public class Graph_fragment extends Fragment {
     private static String TAG = "Graph_fragment";
 
-
-
     ArrayList<Previous_pojo> list2; // = new ArrayList<>();
     protected Typeface tfLight;
     PieChartView pieChartView;
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.grapg_fragment, container, false);
 
