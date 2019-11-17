@@ -498,11 +498,15 @@ public class  Today_Chittagong_fragment extends Fragment implements View.OnClick
 
     }
 
-
     public void axelDetailsActivity(String axel){
+        int t  = getArrayList(axel).size();
+        if (t ==0){
+            Toast.makeText(getActivity(), "No Car Found", Toast.LENGTH_SHORT).show();
+        }else {
+            Intent i = new Intent(getActivity(), AxelDetailsActivity.class);
+            i.putExtra("axel", axel);
+            startActivity(i);
+        }
 
-        Intent i = new Intent(getActivity(), AxelDetailsActivity.class);
-        i.putExtra("axel", axel);
-        startActivity(i);
     }
 }

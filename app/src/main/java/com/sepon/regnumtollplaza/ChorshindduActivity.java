@@ -55,8 +55,6 @@ public class ChorshindduActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-
-
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         ViewPager viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(sectionsPagerAdapter);
@@ -86,9 +84,8 @@ public class ChorshindduActivity extends AppCompatActivity {
 //        });
 
 
-
-       // getCatalogiesProduct(url);
-       getTodayData();
+        getCatalogiesProduct(url);
+     //  getTodayData();
 
 
     }
