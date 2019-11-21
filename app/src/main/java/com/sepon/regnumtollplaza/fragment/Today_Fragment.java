@@ -1,6 +1,8 @@
 package com.sepon.regnumtollplaza.fragment;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,9 +10,18 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.sepon.regnumtollplaza.R;
 import com.sepon.regnumtollplaza.adapter.TodayAdapter;
 import com.sepon.regnumtollplaza.pojo.Tali;
+
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +33,7 @@ public class Today_Fragment extends Fragment {
     private List<Tali> taliList = new ArrayList<>();
     TodayAdapter taliAdapter;
     RecyclerView recyclerView;
+    String url = "http://103.95.99.196/api/today.php";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,6 +61,27 @@ public class Today_Fragment extends Fragment {
         recyclerView.setAdapter(taliAdapter);
 
 
+        ProgressDialog dialog = ProgressDialog.show(getActivity(), "Getting Current Report From Server", "Please wait...", true);
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new  Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                if (response.length()>0){
+                    for (int i=0; i<response.length();i++){
+                        Log.e("new", String.valueOf(i));
+                    }
+                }
+
+                dialog.dismiss();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                dialog.dismiss();
+            }
+        });
+        requestQueue.add(jsonArrayRequest);
         return view;
     }
 

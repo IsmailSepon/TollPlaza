@@ -19,7 +19,7 @@ import retrofit2.http.POST;
 public interface IApiClient {
 
         @GET(URLUtils.TODAY)
-        Call<Norshinddi> gettodaysreport();
+        Call<List<Norshinddi>> gettodaysreport();
 
 
 
