@@ -49,22 +49,9 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.ToadyViewHol
         holder.vichelName.setText(vichelClass);
         holder.vichelTaka.setText(taliList.get(position).getTaliCountedTaka()+" Taka");
         holder.vichelcount.setText(taliList.get(position).getTaliCount());
+        holder.vichelProfile.setImageResource(taliList.get(position).getImage());
+        holder.rate.setText(taliList.get(position).getRate());
 
-        if (vichelClass.equals("rickshaw")){
-            holder.vichelProfile.setImageResource(R.drawable.rickshaw);
-        }else if (vichelClass.equals("saden")){
-            holder.vichelProfile.setImageResource(R.drawable.sedan);
-        }else if (vichelClass.equals("minibus")){
-            holder.vichelProfile.setImageResource(R.drawable.minibus);
-        }else if (vichelClass.equals("microbus")){
-            holder.vichelProfile.setImageResource(R.drawable.microbus);
-        }else if (vichelClass.equals("cng")){
-            holder.vichelProfile.setImageResource(R.drawable.cng);
-        }else if (vichelClass.equals("bike")){
-            holder.vichelProfile.setImageResource(R.drawable.bike);
-        }else {
-            holder.vichelProfile.setImageResource(R.drawable.tollview);
-        }
 
     }
 
@@ -76,7 +63,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.ToadyViewHol
     public class ToadyViewHolder extends RecyclerView.ViewHolder {
 
         ImageView vichelProfile;
-        TextView vichelcount, vichelTaka, vichelName;
+        TextView vichelcount, vichelTaka, vichelName, rate;
 
         public ToadyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -85,7 +72,7 @@ public class TodayAdapter extends RecyclerView.Adapter<TodayAdapter.ToadyViewHol
             vichelName = itemView.findViewById(R.id.vichelName);
             vichelcount = itemView.findViewById(R.id.vichelCount);
             vichelTaka = itemView.findViewById(R.id.vichel_tk);
-
+            rate = itemView.findViewById(R.id.rate);
 
         }
     }

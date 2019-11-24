@@ -1,11 +1,18 @@
 package com.sepon.regnumtollplaza.fragment;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,21 +29,28 @@ import com.sepon.regnumtollplaza.R;
 import com.sepon.regnumtollplaza.adapter.TodayAdapter;
 import com.sepon.regnumtollplaza.pojo.Norshinddi;
 import com.sepon.regnumtollplaza.pojo.Tali;
+import com.sepon.regnumtollplaza.utility.MyReceiver;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class Today_Fragment extends Fragment {
 
+    private BroadcastReceiver MyReceiver = null;
 
     private List<Tali> taliList = new ArrayList<>();
     TodayAdapter taliAdapter;
     RecyclerView recyclerView;
     String url = "http://103.95.99.196/api/today.php";
+    TextView grandtotal;
 
     private List<Norshinddi> todayreport;// = new ArrayList<>();
 
@@ -49,28 +63,13 @@ public class Today_Fragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.tali_layout, container, false);
 
-        Tali tali = new Tali("rickshaw","20","100");
-        Tali tali1 = new Tali("saden","20","100");
-        Tali tali2 = new Tali("minibus","20","100");
-        Tali tali3 = new Tali("microbus","20","100");
-        Tali tali4 = new Tali("cng","20","100");
-        Tali tali5 = new Tali("bike","20","100");
-        taliList.add(tali);
-        taliList.add(tali1);
-        taliList.add(tali2);
-        taliList.add(tali3);
-        taliList.add(tali4);
-        taliList.add(tali5);
-
         recyclerView = view.findViewById(R.id.tali_recyclerview);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setHasFixedSize(true);
-        TodayAdapter taliAdapter = new TodayAdapter(taliList, getActivity());
-        recyclerView.setAdapter(taliAdapter);
+        grandtotal = view.findViewById(R.id.grand_total);
+
+        MyReceiver = new MyReceiver();
 
 
         getDaysReport(url);
-
         return view;
     }
 
@@ -196,24 +195,97 @@ public class Today_Fragment extends Fragment {
             }
         }
 
+        String rickshaw,motorcycle, wheeler, microbus, minibus, agrobus, minitruck,bigbus,threefourwheeler,sedancar,mediumtruck,heavytruck,trailerlong, vip;
+        int rickshaw_total,motorcycle_total, wheeler_total, microbus_total, minibus_total, agrobus_total, minitruck_total,bigbus_total,threefourwheeler_total,sedancar_total,mediumtruck_total,heavytruck_total,trailerlong_total, vip_total, grand_total;
 
-        Log.e("Rickshaw_Van", String.valueOf(Rickshaw_Van.size()));
-        Log.e(" MotorCycle", String.valueOf(MotorCycle.size()));
-        Log.e("Wheeler ", String.valueOf(Wheeler.size()));
-        Log.e("Micro_Bus ", String.valueOf(Micro_Bus.size()));
-        Log.e("Mini_Bus ", String.valueOf(Mini_Bus.size()));
-        Log.e("Agro_Use ", String.valueOf(Agro_Use.size()));
-        Log.e("Mini_Truck ", String.valueOf(Mini_Truck.size()));
-        Log.e("Big_Bus ", String.valueOf(Big_Bus.size()));
-        Log.e("three_four_Wheeler ", String.valueOf(three_four_Wheeler.size()));
-        Log.e("Sedan_Car ", String.valueOf(Sedan_Car.size()));
-        Log.e("Medium_Truck ", String.valueOf(Medium_Truck.size()));
-        Log.e("Mini_Truck ", String.valueOf(Mini_Truck.size()));
-        Log.e("Heavy_Truck ", String.valueOf(Heavy_Truck.size()));
-        Log.e("Trailer_Long ", String.valueOf(Trailer_Long.size()));
-        Log.e("Trailer_Long ", String.valueOf(VIP.size()));
+
+        rickshaw = String.valueOf(Rickshaw_Van.size());
+        motorcycle = String.valueOf(MotorCycle.size());
+        wheeler = String.valueOf(Wheeler.size());
+        microbus = String.valueOf(Micro_Bus.size());
+        minibus = String.valueOf(Mini_Bus.size());
+        agrobus = String.valueOf(Agro_Use.size());
+        minitruck =  String.valueOf(Mini_Truck.size());
+        bigbus = String.valueOf(Big_Bus.size());
+        threefourwheeler = String.valueOf(three_four_Wheeler.size());
+        sedancar =  String.valueOf(Sedan_Car.size());
+        mediumtruck = String.valueOf(Medium_Truck.size());
+        heavytruck = String.valueOf(Heavy_Truck.size());
+        trailerlong = String.valueOf(Trailer_Long.size());
+        vip = String.valueOf(VIP.size());
+
+//        Log.e("Rickshaw_Van", rickshaw);
+//        Log.e(" MotorCycle", motorcycle);
+//        Log.e("Wheeler ", wheeler);
+//        Log.e("Micro_Bus ", microbus);
+//        Log.e("Mini_Bus ", minibus);
+//        Log.e("Agro_Use ", agrobus);
+//        Log.e("Mini_Truck ", minitruck);
+//        Log.e("Big_Bus ", bigbus);
+//        Log.e("three_four_Wheeler ",threefourwheeler);
+//        Log.e("Sedan_Car ", sedancar);
+//        Log.e("Medium_Truck ", mediumtruck);
+//        Log.e("Heavy_Truck ",heavytruck);
+//        Log.e("Trailer_Long ", trailerlong);
+//        Log.e("Vip ", vip);
+
+        rickshaw_total = Integer.parseInt(rickshaw)*5;
+        motorcycle_total = Integer.parseInt(motorcycle)*10;
+        wheeler_total = Integer.parseInt(wheeler)*60;
+        microbus_total = Integer.parseInt(microbus)*60;
+        minibus_total = Integer.parseInt(minibus)*75;
+        agrobus_total = Integer.parseInt(agrobus)*90;
+        minitruck_total = Integer.parseInt(minitruck)*115;
+        bigbus_total = Integer.parseInt(bigbus)*135;
+        threefourwheeler_total = Integer.parseInt(threefourwheeler)*15;
+        sedancar_total = Integer.parseInt(sedancar)*40;
+        mediumtruck_total = Integer.parseInt(mediumtruck)*150;
+        heavytruck_total = Integer.parseInt(heavytruck)*300;
+        trailerlong_total = Integer.parseInt(trailerlong)*375;
+
+
+        grand_total = rickshaw_total+motorcycle_total+wheeler_total+microbus_total+minibus_total+agrobus_total+minitruck_total+bigbus_total+threefourwheeler_total+sedancar_total+mediumtruck_total+heavytruck_total+trailerlong_total;
+        grandtotal.setText("Running Fund: "+grand_total+" tk");
+
+        Tali tali = new Tali("Rickshaw Van", rickshaw,  String.valueOf(rickshaw_total), R.drawable.rickshaw, "5tk");
+        Tali tali1 = new Tali("MotorCycle", motorcycle, String.valueOf(motorcycle_total), R.drawable.bike, "10tk");
+        Tali tali2 = new Tali("4Wheeler", wheeler,   String.valueOf(wheeler_total), R.drawable.axel4, "50tk");
+        Tali tali3 = new Tali("Micro Bus", microbus,    String.valueOf(microbus_total), R.drawable.microbus, "60tk");
+        Tali tali4 = new Tali("Mini Bus", minibus,  String.valueOf(minibus_total), R.drawable.minibus, "75tk");
+        Tali tali5 = new Tali("Agro Use", agrobus,  String.valueOf(agrobus_total), R.drawable.agro, "90tk");
+        Tali tali6 = new Tali("Mini Truck", minitruck,  String.valueOf(minitruck_total), R.drawable.axel2, "115tk");
+        Tali tali7 = new Tali("Big Bus", bigbus,    String.valueOf(bigbus_total), R.drawable.bus, "135tk");
+        Tali tali8 = new Tali("Three Four Wheeler", threefourwheeler,String.valueOf(threefourwheeler_total), R.drawable.axel4, "15tk");
+        Tali tali9 = new Tali("Sedan Car", sedancar,    String.valueOf(sedancar_total), R.drawable.sedan, "40tk");
+        Tali tali10 = new Tali("Medium Truck", mediumtruck, String.valueOf(mediumtruck_total), R.drawable.axel2, "150tk");
+        Tali tali11 = new Tali("Heavy Truck", heavytruck,   String.valueOf(heavytruck_total), R.drawable.axel4, "300tk");
+        Tali tali12 = new Tali("Trailer Long", trailerlong,  String.valueOf(trailerlong_total), R.drawable.axel6, "375tk");
+        Tali tali13 = new Tali("Vip pass", vip,"0.00", R.drawable.sedan,"free");
+
+        taliList.add(tali);
+        taliList.add(tali1);
+        taliList.add(tali2);
+        taliList.add(tali3);
+        taliList.add(tali4);
+        taliList.add(tali5);
+        taliList.add(tali6);
+        taliList.add(tali7);
+        taliList.add(tali8);
+        taliList.add(tali9);
+        taliList.add(tali10);
+        taliList.add(tali11);
+        taliList.add(tali12);
+        taliList.add(tali13);
+
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setHasFixedSize(true);
+        TodayAdapter taliAdapter = new TodayAdapter(taliList, getActivity());
+        recyclerView.setAdapter(taliAdapter);
+
+
+
         dialog.dismiss();
     }
-
 
 }

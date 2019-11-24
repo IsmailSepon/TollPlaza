@@ -122,6 +122,7 @@ public class  Today_Chittagong_fragment extends Fragment implements View.OnClick
                 }else {
                     dialog.dismiss();
                     Toast.makeText(getActivity(), "report not update yet", Toast.LENGTH_SHORT).show();
+                    getActivity().finish();
                 }
                 dialog.dismiss();
             }

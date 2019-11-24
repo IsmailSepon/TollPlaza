@@ -134,6 +134,10 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
+    }
 
     public void string_sharedpreferene(String key, String value){
         SharedPreferences sharedPreferences = getSharedPreferences(key, Context.MODE_PRIVATE);
@@ -152,8 +156,5 @@ public class BaseActivity extends AppCompatActivity {
         return sharedPreferences;
     }
 
-    private boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo() != null;
-    }
+
 }

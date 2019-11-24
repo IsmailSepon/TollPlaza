@@ -56,8 +56,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void generateplaza() {
-        Plaza plaza = new Plaza(R.drawable.tollview,"Chorshinddu");
-        Plaza plaza1 = new Plaza(R.drawable.tollview,"ManikGong");
+        Plaza plaza = new Plaza(R.drawable.tollview,"Chorshindu");
+        Plaza plaza1 = new Plaza(R.drawable.tollview,"ManikGonj");
         Plaza plaza3 = new Plaza(R.drawable.tollview,"Chittagong");
         plazalist.add(plaza);
         plazalist.add(plaza1);

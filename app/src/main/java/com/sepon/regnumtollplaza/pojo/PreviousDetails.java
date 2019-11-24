@@ -6,6 +6,8 @@ public class PreviousDetails {
     String vichelAmount;
     String dayTotalAmount;
 
+    public PreviousDetails(){}
+
     public PreviousDetails(String date, String vichelAmount, String dayTotalAmount) {
         this.date = date;
         this.vichelAmount = vichelAmount;

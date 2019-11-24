@@ -2,11 +2,15 @@ package com.sepon.regnumtollplaza;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +29,7 @@ import com.sepon.regnumtollplaza.main.SectionsPagerAdapter;
 import com.sepon.regnumtollplaza.pojo.Norshinddi;
 import com.sepon.regnumtollplaza.utility.ApiClient;
 import com.sepon.regnumtollplaza.utility.IApiClient;
+import com.sepon.regnumtollplaza.utility.MyReceiver;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -36,10 +41,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 
 public class ChorshindduActivity extends AppCompatActivity {
-
+    private BroadcastReceiver MyReceiver = null;
     TextView title;
     String plazaname;
     ImageButton backBtn;
+    LinearLayout backLayout;
 
     private List<Norshinddi> todayreport;// = new ArrayList<>();
 
@@ -71,6 +77,8 @@ public class ChorshindduActivity extends AppCompatActivity {
 
        // getDaysReport(url);
 
+//        MyReceiver = new MyReceiver();
+//        broadcastIntent();
 
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         ViewPager viewPager = findViewById(R.id.view_pager);
@@ -83,6 +91,8 @@ public class ChorshindduActivity extends AppCompatActivity {
         Intent intent = getIntent();
         plazaname = intent.getStringExtra("plazaName");
         title.setText(plazaname);
+
+        backLayout = findViewById(R.id.backLayout);
 
         backBtn = findViewById(R.id.backBtn);
         backBtn.setOnClickListener(new View.OnClickListener() {

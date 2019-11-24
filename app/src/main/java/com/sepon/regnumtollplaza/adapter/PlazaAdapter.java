@@ -7,11 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.sepon.regnumtollplaza.ChittagongActivity;
 import com.sepon.regnumtollplaza.Chittagong_Axel;
 import com.sepon.regnumtollplaza.ChorshindduActivity;
@@ -25,6 +28,8 @@ public class PlazaAdapter extends RecyclerView.Adapter<PlazaAdapter.PlazaViewHol
 
     private List<Plaza> plazaList;
     Context context;
+    FirebaseAuth mAuth;
+    FirebaseUser currentUser;
 
     public PlazaAdapter(List<Plaza> plazaList, Context context) {
         this.plazaList = plazaList;
@@ -48,17 +53,30 @@ public class PlazaAdapter extends RecyclerView.Adapter<PlazaAdapter.PlazaViewHol
                 public void onClick(View v) {
                     String plaza =plazaList.get(position).getName();
                     if (plaza.equals("Chittagong")){
+
                         Intent intent = new Intent(context, ChittagongActivity.class);
                         intent.putExtra("plazaName", plaza);
                         context.startActivity(intent);
-                    }else if (plaza.equals("ManikGong")){
+
+                    }else if (plaza.equals("ManikGonj")){
                         Intent intent = new Intent(context, ManikGong_Axel.class);
                         intent.putExtra("plazaName", plaza);
                         context.startActivity(intent);
-                    }else if (plaza.equals("Chorshinddu")){
-                        Intent intent = new Intent(context, ChorshindduActivity.class);
-                        intent.putExtra("plazaName", plaza);
-                        context.startActivity(intent);
+                    }else if (plaza.equals("Chorshindu")){
+
+                        mAuth = FirebaseAuth.getInstance();
+                        currentUser = mAuth.getCurrentUser();
+                        String email = currentUser.getEmail();
+
+                        if (email.equals("mamuntushi@gmail.com")){ //here block the user
+
+                            Toast.makeText(context, "Sorry Chorshindu not Live!", Toast.LENGTH_SHORT).show();
+                        }else {
+                            Intent intent = new Intent(context, ChorshindduActivity.class);
+                            intent.putExtra("plazaName", plaza);
+                            context.startActivity(intent);
+                        }
+
                     }
 
                 }

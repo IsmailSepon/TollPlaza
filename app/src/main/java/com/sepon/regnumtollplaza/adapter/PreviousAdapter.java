@@ -1,9 +1,11 @@
 package com.sepon.regnumtollplaza.adapter;
 
 import android.content.Context;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -37,7 +39,8 @@ public class PreviousAdapter extends RecyclerView.Adapter<PreviousAdapter.PlazaV
 
         holder.date.setText(pewviousList.get(position).getDate());
         holder.taka.setText(pewviousList.get(position).getDayTotalAmount());
-        holder.amount.setText(pewviousList.get(position).getVichelAmount());
+        holder.amount.setText(pewviousList.get(position).getVichelAmount()+" Car");
+
 
     }
 
@@ -50,12 +53,14 @@ public class PreviousAdapter extends RecyclerView.Adapter<PreviousAdapter.PlazaV
 
         TextView date,amount,taka;
 
+
         public PlazaViewHolder(@NonNull View itemView) {
             super(itemView);
 
             date = itemView.findViewById(R.id.date);
             amount = itemView.findViewById(R.id.vichelAmount);
             taka = itemView.findViewById(R.id.vichelTaka);
+
         }
     }
 }

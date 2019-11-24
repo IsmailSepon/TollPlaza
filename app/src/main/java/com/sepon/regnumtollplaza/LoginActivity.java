@@ -2,6 +2,7 @@ package com.sepon.regnumtollplaza;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,6 +34,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         currentUser = mAuth.getCurrentUser();
         if (currentUser != null){
             String profile = currentUser.getDisplayName();
+           // Log.e("Profile ", profile);
             if (profile.equals("")){
                 //admin
                 goforadmin() ;
