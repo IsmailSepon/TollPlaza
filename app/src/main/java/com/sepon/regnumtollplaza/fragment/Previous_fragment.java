@@ -51,7 +51,7 @@ public class Previous_fragment extends Fragment {
 
     private PreviousAdapter previousAdapter;
     private RecyclerView previousRecyclerview;
-    private ArrayList<PreviousDetails> previousDetailsList = new ArrayList<>();
+    private ArrayList<PreviousDetails> previousDetailsList;// = new ArrayList<>();
     private String thisDate, shareDate;
     private DatabaseReference databaseReference;
     private String url = "http://103.95.99.196/api/yesterday.php";
@@ -122,13 +122,15 @@ public class Previous_fragment extends Fragment {
 
     private void getPreviousReportFromFirebase() {
 
+        //previousDetailsList = new ArrayList<>();
+
       FirebaseDatabase  database = FirebaseDatabase.getInstance();
       DatabaseReference databaseReference = database.getReference("Norshinddi");
       databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-
+                previousDetailsList = new ArrayList<>();
                 for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
                     PreviousDetails previousDetails = singleSnapshot.getValue(PreviousDetails.class);
                     Log.e("p: ", previousDetails.getDate());

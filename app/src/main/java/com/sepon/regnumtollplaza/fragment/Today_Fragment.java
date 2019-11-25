@@ -4,9 +4,11 @@ import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.icu.util.Calendar;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +40,11 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -49,7 +55,7 @@ public class Today_Fragment extends Fragment {
     private List<Tali> taliList = new ArrayList<>();
     TodayAdapter taliAdapter;
     RecyclerView recyclerView;
-    String url = "http://103.95.99.196/api/today.php";
+  //  String url = "http://103.95.99.196/api/today.php";
     TextView grandtotal;
 
     private List<Norshinddi> todayreport;// = new ArrayList<>();
@@ -68,8 +74,32 @@ public class Today_Fragment extends Fragment {
 
         MyReceiver = new MyReceiver();
 
+        Date date = new Date() ;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("kk:mm");
+        dateFormat.format(date);
 
-        getDaysReport(url);
+        Log.e("Time====", dateFormat.format(date));
+
+        try {
+            if(dateFormat.parse(dateFormat.format(date)).after(dateFormat.parse("01:00")) && dateFormat.parse(dateFormat.format(date)).before(dateFormat.parse("07:00")))
+            {
+                //show yesterday data in running fund
+                String url = "http://103.95.99.196/api/yesterday.php";
+                Log.e("Running URL", url);
+                getDaysReport(url);
+
+            }else{
+                //show today data in running fund
+                String url = "http://103.95.99.196/api/today.php";
+                Log.e("Running URL", url);
+                getDaysReport(url);
+
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+      //  getDaysReport(url);
         return view;
     }
 
@@ -85,7 +115,7 @@ public class Today_Fragment extends Fragment {
             public void onResponse(JSONArray response) {
                 Log.e("Reponse", String.valueOf(response.length()));
 
-                for (int i=0; i<response.length();i++){
+                for (int i=0; i<response.length();i++) {
                     try {
 
                         JSONObject j =  response.getJSONObject(i);
@@ -287,5 +317,8 @@ public class Today_Fragment extends Fragment {
 
         dialog.dismiss();
     }
+
+
+
 
 }
