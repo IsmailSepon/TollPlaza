@@ -81,7 +81,8 @@ public class Today_Fragment extends Fragment {
         Log.e("Time====", dateFormat.format(date));
 
         try {
-            if(dateFormat.parse(dateFormat.format(date)).after(dateFormat.parse("01:00")) && dateFormat.parse(dateFormat.format(date)).before(dateFormat.parse("07:00")))
+            if(dateFormat.parse(dateFormat.format(date)).after(dateFormat.parse("00:00")) &&
+               dateFormat.parse(dateFormat.format(date)).before(dateFormat.parse("07:00")))
             {
                 //show yesterday data in running fund
                 String url = "http://103.95.99.196/api/yesterday.php";
