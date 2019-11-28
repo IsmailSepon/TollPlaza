@@ -1,6 +1,7 @@
 package com.sepon.regnumtollplaza.admin;
 
 import android.Manifest;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -13,11 +14,16 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.ListView;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,6 +45,7 @@ import com.sepon.regnumtollplaza.BaseActivity;
 import com.sepon.regnumtollplaza.ChittagongActivity;
 import com.sepon.regnumtollplaza.LoginActivity;
 import com.sepon.regnumtollplaza.R;
+import com.sepon.regnumtollplaza.pojo.Regular;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -54,6 +61,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -61,6 +69,8 @@ import java.util.List;
 import java.util.Map;
 
 import io.opencensus.metrics.LongGauge;
+
+import static com.sepon.regnumtollplaza.R.layout.dialog;
 
 public class ExcelReadActivity extends BaseActivity {
 
@@ -94,7 +104,8 @@ public class ExcelReadActivity extends BaseActivity {
 
     FirebaseFirestore firebaseFirestore;
 
-    ProgressDialog dialog;
+
+    String mCustomDate = null;
 
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -102,6 +113,9 @@ public class ExcelReadActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+
+
+      //  showDialog("Excel", "Hello");
 
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
@@ -413,58 +427,141 @@ public class ExcelReadActivity extends BaseActivity {
 
         ExcelReadActivity.this.runOnUiThread(new Runnable() {
             public void run() {
-                showAlertWithOKClick("Excel", msg);
+                //showAlertWithOKClick("Excel", msg);
+
+                showDialog("Excel", msg);
+
             }
         });
 
 
     }
 
-    public void showAlertWithOKClick(String title_str, String message) {
-        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                this);
-        alertDialogBuilder.setTitle(title_str);
-        alertDialogBuilder.setMessage(message).setPositiveButton("Upload Report", new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-
-                Toast.makeText(ExcelReadActivity.this, "nice", Toast.LENGTH_SHORT).show();
-                    uploadRepoert();
-            }
-        });
-        alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+    private void showDialog(String excel, String msg) {
+        final Dialog dialog = new Dialog(ExcelReadActivity.this);
+        dialog.setContentView(R.layout.dialog);
+        dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        dialog.setTitle(excel);
+        TextView msgtext = dialog.findViewById(R.id.msg);
+        msgtext.setText(msg);
+        Button cancel = dialog.findViewById(R.id.cancel);
+        Button upload = dialog.findViewById(R.id.upload);
+        DatePicker datePicker = dialog.findViewById(R.id.datepicker);
+        TextView dateshow = dialog.findViewById(R.id.dateshow);
+        cancel.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
+            public void onClick(View v) {
+                Toast.makeText(ExcelReadActivity.this, "cancel", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
             }
         });
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.setCancelable(false);
-        alertDialog.show();
+        upload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ExcelReadActivity.this, "upload", Toast.LENGTH_SHORT).show();
+                if (mCustomDate!=null){
+                    // previous
+                    Log.e("previous Date ", mCustomDate);
+                    dialog.dismiss();
+                    uploadRepoert(mCustomDate);
+
+                }else {
+                    //Today
+                    Log.e("previous Date ", "null");
+                    dialog.dismiss();
+                    uploadRepoert();
+                }
+            }
+        });
+
+        Switch s = dialog.findViewById(R.id.switch1);
+        s.setChecked(false);
+        s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Toast.makeText(ExcelReadActivity.this, ""+isChecked, Toast.LENGTH_SHORT).show();
+                if (isChecked==true){
+                    datePicker.setVisibility(View.VISIBLE);
+                    dateshow.setVisibility(View.VISIBLE);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(System.currentTimeMillis());
+                    String date = datePicker.getDayOfMonth()+"-"+ (datePicker.getMonth() + 1)+"-"+datePicker.getYear();
+
+                    dateshow.setText(date);
+                    datePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {
+
+                        @Override
+                        public void onDateChanged(DatePicker datePicker, int year, int month, int dayOfMonth) {
+                           // Log.d("Date", "Year=" + year + " Month=" + (month + 1) + " day=" + dayOfMonth);
+                            mCustomDate = datePicker.getDayOfMonth()+"-"+ (datePicker.getMonth() + 1)+"-"+datePicker.getYear();
+                            dateshow.setText(mCustomDate);
+                            Log.e("date", mCustomDate);
+
+
+                        }
+                    });
+                }else {
+                    datePicker.setVisibility(View.GONE);
+                    dateshow.setVisibility(View.GONE);
+                }
+
+            }
+        });
+
+        dialog.show();
+
     }
 
-    private void uploadRepoert() {
+//    public void showAlertWithOKClick(String title_str, String message) {
+//        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+//                this);
+//        alertDialogBuilder.setTitle(title_str);
+//        alertDialogBuilder.setMessage(message)
+//                .setPositiveButton("Upload Report", new DialogInterface.OnClickListener() {
+//
+//            public void onClick(DialogInterface dialog, int id) {
+//                dialog.cancel();
+//
+//                Toast.makeText(ExcelReadActivity.this, "nice", Toast.LENGTH_SHORT).show();
+//                uploadRepoert();
+//
+//            }
+//        });
+//        alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                dialog.cancel();
+//            }
+//        });
+//        AlertDialog alertDialog = alertDialogBuilder.create();
+//        alertDialog.setCancelable(false);
+//        alertDialog.show();
+//    }
+
+    private void uploadRepoert() {  //toady report Upload fun
 
         showprogessdialog("Report Uploaded to server");
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "Firebase Report-1 upload thread start.....");
-
-                for (int i=0;i<uploadReport.size();i++){
-                    Log.e(TAG, String.valueOf(i));
-                    Report report = uploadReport.get(i);
-                    myRef.child(thisDate).child("RegularReport").child(String.valueOf(i)).setValue(report);
-                    reportHashMap.put(String.valueOf(i), report);
-
-                }
-                hiddenProgressDialog();
-                Intent intent = new Intent(ExcelReadActivity.this, ChittagongActivity.class);
-                startActivity(intent);
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Log.d(TAG, "Firebase Report-1 upload thread start.....");
+//
+//                for (int i=0;i<uploadReport.size();i++){
+//                    Log.e(TAG, String.valueOf(i));
+//                    Report report = uploadReport.get(i);
+//                    myRef.child(thisDate).child("RegularReport").child(String.valueOf(i)).setValue(report);
+//                   // reportHashMap.put(String.valueOf(i), report);
+//
+//                }
+//                hiddenProgressDialog();
+//                Intent intent = new Intent(ExcelReadActivity.this, ChittagongActivity.class);
+//                startActivity(intent);
+//            }
+//        }).start();
+        //serilizeRegularData(uploadReport);
+        Regular regular = serilizeRegularData(uploadReport);
+        myRef.child(thisDate).child("RegularReport").setValue(regular);
 
         for (int i=0;i<ctrlRreport.size();i++){
             Log.e(TAG, String.valueOf(i));
@@ -476,9 +573,92 @@ public class ExcelReadActivity extends BaseActivity {
         // this short info just for previous view
         Short s = new Short(String.valueOf(uploadData.size()), String.valueOf(ctrlRreport.size()), String.valueOf(uploadReport.size()));
         myRef.child(thisDate).child("short").setValue(s);
-
-
+        hiddenProgressDialog();
+        Intent intent = new Intent(ExcelReadActivity.this, ChittagongActivity.class);
+        startActivity(intent);
     }
+
+    private Regular serilizeRegularData(ArrayList<Report> uploadReport) {
+        ArrayList<Report> regularReport2 = new ArrayList<>();
+        ArrayList<Report> regularReport3 = new ArrayList<>();
+        ArrayList<Report> regularReport4 = new ArrayList<>();
+        ArrayList<Report> regularReport5 = new ArrayList<>();
+        ArrayList<Report> regularReport6 = new ArrayList<>();
+        ArrayList<Report> regularReport7 = new ArrayList<>();
+        ArrayList<Report> totallaxel = new ArrayList<>();
+        String a2,a3,a4,a5,a6,a7;
+
+        for (int i=0; i<uploadReport.size(); i++){
+            Report report = uploadReport.get(i);
+            String tc = report.getTcClass();
+            if (tc.equals("Truck 2 Axle")){
+                regularReport2.add(report);
+            }else if (tc.equals("Truck 3 Axle")){
+                regularReport3.add(report);
+            }else if (tc.equals("Truck 4 Axle")){
+                regularReport4.add(report);
+            }else if (tc.equals("Truck 5 Axle")){
+                regularReport5.add(report);
+            }else if (tc.equals("Truck 6 Axle")){
+                regularReport6.add(report);
+            }else if (tc.equals("Truck 7 Axle")){
+                regularReport7.add(report);
+            }else {
+
+            }
+        }
+        Regular regular = new Regular(String.valueOf(regularReport2.size()),
+                String.valueOf(regularReport3.size()),
+                String.valueOf(regularReport4.size()),
+                String.valueOf(regularReport5.size()),
+                String.valueOf(regularReport6.size()),
+                String.valueOf(regularReport7.size()),
+                String.valueOf(uploadReport.size()));
+
+        return regular;
+    }
+
+
+    private void uploadRepoert(String previousDate) {   //previous report Upload fun
+
+        showprogessdialog("Report Uploaded to server");
+
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Log.d(TAG, "Firebase Report-1 upload thread start.....");
+//
+//                for (int i=0;i<uploadReport.size();i++){
+//                    Log.e(TAG, String.valueOf(i));
+//                    Report report = uploadReport.get(i);
+//                    myRef.child(previousDate).child("RegularReport").child(String.valueOf(i)).setValue(report);
+//                    reportHashMap.put(String.valueOf(i), report);
+//
+//                }
+//                hiddenProgressDialog();
+//                Intent intent = new Intent(ExcelReadActivity.this, ChittagongActivity.class);
+//                startActivity(intent);
+//            }
+//        }).start();
+        Regular regular = serilizeRegularData(uploadReport);
+        myRef.child(thisDate).child("RegularReport").setValue(regular);
+
+        for (int i=0;i<ctrlRreport.size();i++){
+            Log.e(TAG, String.valueOf(i));
+            Report report = ctrlRreport.get(i);
+            myRef.child(previousDate).child("ctrlReport").child(String.valueOf(i)).setValue(report);
+
+        }
+
+        // this short info just for previous view
+        Short s = new Short(String.valueOf(uploadData.size()), String.valueOf(ctrlRreport.size()), String.valueOf(uploadReport.size()));
+        myRef.child(thisDate).child("short").setValue(s);
+        hiddenProgressDialog();
+        Intent intent = new Intent(ExcelReadActivity.this, ChittagongActivity.class);
+        startActivity(intent);
+    }
+
+
 
     private void firestore(){
         firebaseFirestore = FirebaseFirestore.getInstance();
@@ -507,5 +687,27 @@ public class ExcelReadActivity extends BaseActivity {
 
         }
 
+    }
+
+
+    private void pickData(){
+        // Get Current Date
+        final Calendar c = Calendar.getInstance();
+       int mYear = c.get(Calendar.YEAR);
+        int  mMonth = c.get(Calendar.MONTH);
+        int mDay = c.get(Calendar.DAY_OF_MONTH);
+
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                new DatePickerDialog.OnDateSetListener() {
+
+                    @Override
+                    public void onDateSet(DatePicker view, int year,
+                                          int monthOfYear, int dayOfMonth) {
+                      //  txtDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+
+                    }
+                }, mYear, mMonth, mDay);
+        datePickerDialog.show();
     }
 }

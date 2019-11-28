@@ -33,6 +33,7 @@ import com.sepon.regnumtollplaza.AxelDetailsActivity;
 import com.sepon.regnumtollplaza.ChittagongActivity;
 import com.sepon.regnumtollplaza.R;
 import com.sepon.regnumtollplaza.admin.Report;
+import com.sepon.regnumtollplaza.pojo.Regular;
 
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
@@ -84,7 +85,10 @@ public class  Today_Chittagong_fragment extends Fragment implements View.OnClick
 
         if (thisDate.equals(shareDate)){
             //todo load & check from sharepreferenced
-                getsharePreferencedata1();
+                //getsharePreferencedata1();
+
+                 Regular regular = getRegular();
+                 setInfo(regular);
                 getsharePreferencedata2();
         }else {
 //            //todo load & check from firebase
@@ -109,13 +113,15 @@ public class  Today_Chittagong_fragment extends Fragment implements View.OnClick
                     // Toast.makeText(getActivity(), "report  update yet", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
 
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            getRegularReportFromFirebase();
-                        }
-                    }).start();
+//                    new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                          //  getRegularReportFromFirebase();
+//                           // getRegularTotal();
+//                        }
+//                    }).start();
 
+                    getRegularTotal();
                     getCtrlRdata();
                     storeDatetosharepref(thisDate);
 
@@ -132,6 +138,52 @@ public class  Today_Chittagong_fragment extends Fragment implements View.OnClick
                 dialog.dismiss();
             }
         });
+    }
+
+    private void getRegularTotal(){
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = database.getReference("chittagong").child(thisDate).child("RegularReport");
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                Regular regular = dataSnapshot.getValue(Regular.class);
+                setInfo(regular);
+                saveRegular(regular);
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void setInfo(Regular regular) {
+        rt = Integer.parseInt(regular.getAxelT());
+        Log.e("axel2", regular.getAxel2());
+        r1.setText("Regular : "+regular.getAxel2());
+
+        Log.e("axel3", regular.getAxel3());
+        r2.setText("Regular : "+regular.getAxel3());
+
+        Log.e("axel4", regular.getAxel4());
+        r3.setText("Regular : "+regular.getAxel4());
+
+        Log.e("axel5", regular.getAxel5());
+        r4.setText("Regular : "+regular.getAxel5());
+
+        Log.e("axel6", regular.getAxel6());
+        r5.setText("Regular : "+regular.getAxel6());
+
+        Log.e("axel7", regular.getAxel7());
+        r6.setText("Regular : "+regular.getAxel7());
+
+
     }
 
     private void getRegularReportFromFirebase() {
@@ -349,6 +401,25 @@ public class  Today_Chittagong_fragment extends Fragment implements View.OnClick
         String json = gson.toJson(list);
         editor.putString(key, json);
         editor.apply();     // This line is IMPORTANT !!!
+
+    }
+
+    public void saveRegular(Regular regular){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = prefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(regular);
+        editor.putString("regular", json);
+        editor.apply();
+    }
+
+    public Regular getRegular(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        Gson gson = new Gson();
+        String json = prefs.getString("regular", null);
+        Regular regular = gson.fromJson(json, Regular.class);
+        return regular;
+
 
     }
 

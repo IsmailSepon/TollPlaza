@@ -116,38 +116,43 @@ public class Today_Fragment extends Fragment {
             public void onResponse(JSONArray response) {
                 Log.e("Reponse", String.valueOf(response.length()));
 
-                for (int i=0; i<response.length();i++) {
-                    try {
+                if (response.length()!=0){
+                    for (int i=0; i<response.length();i++) {
+                        try {
 
-                        JSONObject j =  response.getJSONObject(i);
-                        //  Log.e("Amount", j.getString("amount"));
-                        Norshinddi norshinddi = new Norshinddi(j.getString("Agro_Use"),
-                                j.getString("amount"),
-                                j.getString("Big_Bus"),
-                                j.getString("date_time"),
-                                j.getString("Heavy_Truck"),
-                                j.getString("Medium_Truck"),
-                                j.getString("Micro_Bus"),
-                                j.getString("Mini_Bus"),
-                                j.getString("Mini_Truck"),
-                                j.getString("MotorCycle"),
-                                j.getString("pass_id"),
-                                j.getString("RegNO"),
-                                j.getString("Rickshaw_Van"),
-                                j.getString("Sedan_Car"),
-                                j.getString("three_four_Wheeler"),
-                                j.getString("Trailer_Long"),
-                                j.getString("4Wheeler"));
-                        todayreport.add(norshinddi);
+                            JSONObject j =  response.getJSONObject(i);
+                            //  Log.e("Amount", j.getString("amount"));
+                            Norshinddi norshinddi = new Norshinddi(j.getString("Agro_Use"),
+                                    j.getString("amount"),
+                                    j.getString("Big_Bus"),
+                                    j.getString("date_time"),
+                                    j.getString("Heavy_Truck"),
+                                    j.getString("Medium_Truck"),
+                                    j.getString("Micro_Bus"),
+                                    j.getString("Mini_Bus"),
+                                    j.getString("Mini_Truck"),
+                                    j.getString("MotorCycle"),
+                                    j.getString("pass_id"),
+                                    j.getString("RegNO"),
+                                    j.getString("Rickshaw_Van"),
+                                    j.getString("Sedan_Car"),
+                                    j.getString("three_four_Wheeler"),
+                                    j.getString("Trailer_Long"),
+                                    j.getString("4Wheeler"));
+                            todayreport.add(norshinddi);
 
-                    }catch (Exception p){
+                        }catch (Exception p){
 
+                        }
                     }
-                }
+                    serializeData(todayreport);
+                    dialog.dismiss();
 
-             //   Log.e("List Today ", String.valueOf(todayreport.size()));
-                serializeData(todayreport);
-                dialog.dismiss();
+                }else {
+                    dialog.dismiss();
+                    Toast.makeText(getActivity(), "No report Found!", Toast.LENGTH_SHORT).show();
+                }
+               // dialog.dismiss();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -280,7 +285,7 @@ public class Today_Fragment extends Fragment {
 
         Tali tali = new Tali("Rickshaw Van", rickshaw,  String.valueOf(rickshaw_total), R.drawable.rickshaw, "5tk");
         Tali tali1 = new Tali("MotorCycle", motorcycle, String.valueOf(motorcycle_total), R.drawable.bike, "10tk");
-        Tali tali2 = new Tali("4Wheeler", wheeler,   String.valueOf(wheeler_total), R.drawable.axel4, "50tk");
+        Tali tali2 = new Tali("4Wheeler", wheeler,   String.valueOf(wheeler_total), R.drawable.axel4, "60tk");
         Tali tali3 = new Tali("Micro Bus", microbus,    String.valueOf(microbus_total), R.drawable.microbus, "60tk");
         Tali tali4 = new Tali("Mini Bus", minibus,  String.valueOf(minibus_total), R.drawable.minibus, "75tk");
         Tali tali5 = new Tali("Agro Use", agrobus,  String.valueOf(agrobus_total), R.drawable.agro, "90tk");
@@ -318,8 +323,5 @@ public class Today_Fragment extends Fragment {
 
         dialog.dismiss();
     }
-
-
-
 
 }
