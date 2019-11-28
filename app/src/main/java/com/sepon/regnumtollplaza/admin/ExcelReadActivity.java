@@ -641,7 +641,7 @@ public class ExcelReadActivity extends BaseActivity {
 //            }
 //        }).start();
         Regular regular = serilizeRegularData(uploadReport);
-        myRef.child(thisDate).child("RegularReport").setValue(regular);
+        myRef.child(previousDate).child("RegularReport").setValue(regular);
 
         for (int i=0;i<ctrlRreport.size();i++){
             Log.e(TAG, String.valueOf(i));
@@ -652,7 +652,7 @@ public class ExcelReadActivity extends BaseActivity {
 
         // this short info just for previous view
         Short s = new Short(String.valueOf(uploadData.size()), String.valueOf(ctrlRreport.size()), String.valueOf(uploadReport.size()));
-        myRef.child(thisDate).child("short").setValue(s);
+        myRef.child(previousDate).child("short").setValue(s);
         hiddenProgressDialog();
         Intent intent = new Intent(ExcelReadActivity.this, ChittagongActivity.class);
         startActivity(intent);
