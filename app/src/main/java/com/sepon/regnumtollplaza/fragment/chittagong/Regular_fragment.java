@@ -61,21 +61,21 @@ public class Regular_fragment extends Fragment {
         list = new ArrayList<>();
 
         getDate();
-        getstoreDatetosharepref();
-        Log.e("share ", shareDate);
+  //      getstoreDatetosharepref();
+ //       Log.e("share ", shareDate);
 
-        if (thisDate.equals(shareDate)){
-            //todo load & check from sharepreferenced
-
-                Log.e(TAG, "list get from preference");
-                list = getArrayList("previous_report");
-                set_adapter(list);
-
-        }else {
+//        if (thisDate.equals(shareDate)){
+//            //todo load & check from sharepreferenced
+//
+//                Log.e(TAG, "list get from preference");
+//                list = getArrayList("previous_report");
+//                set_adapter(list);
+//
+//        }else {
             //todo load & check from firebase
 
             Log.e(TAG, "Get data");
-            for (int i=1; i<=7; i++){
+            for (int i=1; i<=17; i++){
                 String yes = yesterday(i);
                 getInfo(yes);
                  }
@@ -83,7 +83,7 @@ public class Regular_fragment extends Fragment {
             adapter = new ChittagongPreviousAdapter(list, getActivity());
             recyclerView.setAdapter(adapter);
             saveArrayList(list, "previous_report");
-        }
+       // }
 
         return view;
     }

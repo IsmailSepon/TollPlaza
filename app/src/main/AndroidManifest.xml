@@ -26,7 +26,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Oracle.JDBCActivity"/>
         <activity android:name=".AxelDetailsActivity" />
         <activity android:name=".admin.DelateActivity" />
         <activity android:name=".admin.ReportUploadActivity" />
