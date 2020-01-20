@@ -75,7 +75,7 @@ public class Regular_fragment extends Fragment {
             //todo load & check from firebase
 
             Log.e(TAG, "Get data");
-            for (int i=1; i<=17; i++){
+            for (int i=1; i<=7; i++){
                 String yes = yesterday(i);
                 getInfo(yes);
                  }
@@ -133,7 +133,7 @@ public class Regular_fragment extends Fragment {
                 Log.e(TAG, yes+"/"+list.size());
                 adapter = new ChittagongPreviousAdapter(list, getActivity());
                 recyclerView.setAdapter(adapter);
-                saveArrayList(list, "previous_report");
+ //               saveArrayList(list, "previous_report");
             }
 
             @Override

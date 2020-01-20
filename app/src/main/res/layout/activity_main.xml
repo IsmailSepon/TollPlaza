@@ -37,4 +37,23 @@
         tools:ignore="MissingConstraints" />
 
 
+    <TextView
+        android:textAlignment="center"
+        android:visibility="invisible"
+        android:id="@+id/warning"
+        android:textColor="@color/red_text"
+        android:textSize="18sp"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:text="Open Your Mail"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/red_text"
+        android:id="@+id/openGmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+
 </LinearLayout>

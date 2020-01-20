@@ -486,6 +486,7 @@ public class ExcelReadActivity extends BaseActivity {
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(System.currentTimeMillis());
                     String date = datePicker.getDayOfMonth()+"-"+ (datePicker.getMonth() + 1)+"-"+datePicker.getYear();
+                    Log.e("Previous Date", date);
 
                     dateshow.setText(date);
                     datePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {
@@ -493,7 +494,11 @@ public class ExcelReadActivity extends BaseActivity {
                         @Override
                         public void onDateChanged(DatePicker datePicker, int year, int month, int dayOfMonth) {
                            // Log.d("Date", "Year=" + year + " Month=" + (month + 1) + " day=" + dayOfMonth);
-                            mCustomDate = datePicker.getDayOfMonth()+"-"+ (datePicker.getMonth() + 1)+"-"+datePicker.getYear();
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                            //String PreviousDate = sdf.format(datePicker.getCalendarView().getDate());
+                            mCustomDate = sdf.format(datePicker.getCalendarView().getDate());
+                            Log.e("Previous Date", mCustomDate);
+                            //mCustomDate = datePicker.getDayOfMonth()+"-"+ (datePicker.getMonth() + 1)+"-"+datePicker.getYear();
                             dateshow.setText(mCustomDate);
                             Log.e("date", mCustomDate);
 

@@ -59,7 +59,6 @@ public class Graph_fragment extends Fragment {
 //                pieData.add(new SliceValue(value, color).setLabel(value+"/"+date));
 //            }
 
-
         RadioGroup radioGroup = (RadioGroup) view.findViewById(R.id.graph_view);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
         {
@@ -107,12 +106,12 @@ public class Graph_fragment extends Fragment {
       Double v = Double.valueOf(new DecimalFormat().format(avg));
       Log.e(TAG, "avg : "+v);
 
-        pieData.add(new SliceValue((float) (v*a2), Color.MAGENTA ));
-        pieData.add(new SliceValue((float) (v*a3), Color.BLUE ));
-        pieData.add(new SliceValue((float) (v*a4), Color.YELLOW ));
-        pieData.add(new SliceValue((float) (v*a5), Color.RED ));
-        pieData.add(new SliceValue((float) (v*a6), Color.CYAN ));
-        pieData.add(new SliceValue((float) (v*a7), Color.WHITE ));
+        pieData.add(new SliceValue((float) (v*a2), Color.parseColor("#3DB0FF") ));
+        pieData.add(new SliceValue((float) (v*a3), Color.parseColor("#A5A5A5") ));
+        pieData.add(new SliceValue((float) (v*a4), Color.parseColor("#ED7D31") ));
+        pieData.add(new SliceValue((float) (v*a5), Color.parseColor("#ED561B") ));
+        pieData.add(new SliceValue((float) (v*a6), Color.parseColor("#50B432") ));
+        pieData.add(new SliceValue((float) (v*a7), Color.parseColor("#C1DC0A") ));
 
         PieChartData pieChartData = new PieChartData(pieData);
         pieChartData.setHasLabels(true).setValueLabelTextSize(14);

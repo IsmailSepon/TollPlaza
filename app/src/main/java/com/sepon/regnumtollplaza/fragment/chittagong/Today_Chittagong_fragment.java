@@ -541,7 +541,6 @@ public class  Today_Chittagong_fragment extends Fragment implements View.OnClick
         card7 = view.findViewById(R.id.c7);
           card7.setOnClickListener(this);
 
-
       }
 
     @Override
