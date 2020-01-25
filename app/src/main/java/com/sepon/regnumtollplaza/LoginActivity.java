@@ -16,6 +16,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.sepon.regnumtollplaza.admin.ExcelReadActivity;
+import com.sepon.regnumtollplaza.admin.ExcelReadSecondActivity;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
@@ -100,7 +101,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     private void goforadmin() {
-        Intent intent = new Intent(this, ExcelReadActivity.class);
+        Intent intent = new Intent(this, ExcelReadSecondActivity.class);
         startActivity(intent);
         this.finish();
     }

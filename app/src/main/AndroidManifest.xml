@@ -46,6 +46,7 @@
         <activity android:name=".Chittagong_Axel" />
         <activity android:name=".BaseActivity" />
         <activity android:name=".admin.ExcelReadActivity" />
+        <activity android:name=".admin.ExcelReadSecondActivity" />
         <activity
             android:name=".Splash_screen_activity"
             android:theme="@style/AppTheme.NoActionBar">
