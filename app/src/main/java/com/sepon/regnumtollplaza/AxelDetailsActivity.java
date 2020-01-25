@@ -116,27 +116,27 @@ public class AxelDetailsActivity extends AppCompatActivity {
         if (lan2_car==0){
             lan2text.setVisibility(View.GONE);
         }else {
-            lan2text.setText("Lan-1: "+lan2_car);
+            lan2text.setText("Lan-2: "+lan2_car);
         }
         //3
         int lan3_car = lan3.size();
         if (lan3_car==0){
             lan3text.setVisibility(View.GONE);
         }else {
-            lan3text.setText("Lan-1: "+lan3_car);
+            lan3text.setText("Lan-3: "+lan3_car);
         }
         //4
         int lan4_car = lan4.size();
         if (lan4_car==0){
             lan4text.setVisibility(View.GONE);
         }else {
-            lan4text.setText("Lan-1: "+lan4_car);
+            lan4text.setText("Lan-4: "+lan4_car);
         }
         int lan5_car = lan5.size();
         if (lan5_car==0){
             lan5text.setVisibility(View.GONE);
         }else {
-            lan5text.setText("Lan-1: "+lan5_car);
+            lan5text.setText("Lan-5: "+lan5_car);
         }
 
        // lan.setText("Lan1-"+lan1_car+" , "+"Lan2-"+lan2_car+" , "+"Lan3-"+lan3_car+" , "+"Lan4-"+lan4_car+" , "+"Lan5-"+lan5_car );

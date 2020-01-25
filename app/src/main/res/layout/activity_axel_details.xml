@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"/>
         <TextView
             android:textAlignment="center"
-            android:text="Lan-1: 100"
+            android:text="Lan-2: 100"
             android:textColor="@color/white"
             android:layout_margin="5dp"
             android:textSize="18sp"
@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"/>
         <TextView
             android:textAlignment="center"
-            android:text="Lan-1: 100"
+            android:text="Lan-3: 100"
             android:textColor="@color/white"
             android:layout_margin="5dp"
             android:textSize="18sp"
@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"/>
         <TextView
             android:textAlignment="center"
-            android:text="Lan-1: 100"
+            android:text="Lan-4: 100"
             android:textColor="@color/white"
             android:layout_margin="5dp"
             android:textSize="18sp"
@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"/>
         <TextView
             android:textAlignment="center"
-            android:text="Lan-1: 100"
+            android:text="Lan-5: 100"
             android:textColor="@color/white"
             android:layout_margin="5dp"
             android:textSize="18sp"
