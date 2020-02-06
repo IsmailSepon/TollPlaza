@@ -1,5 +1,6 @@
 package com.sepon.regnumtollplaza.fragment.chittagong;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -8,12 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.common.reflect.TypeToken;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -23,23 +22,18 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.sepon.regnumtollplaza.R;
 import com.sepon.regnumtollplaza.adapter.ChittagongPreviousAdapter;
-import com.sepon.regnumtollplaza.admin.Report;
 import com.sepon.regnumtollplaza.admin.Short;
 import com.sepon.regnumtollplaza.pojo.Previous_pojo;
-
-import org.apache.xmlbeans.impl.xb.xsdschema.Public;
-
 import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 public class Regular_fragment extends Fragment {
 
-    String thisDate, shareDate;
+    private String thisDate, shareDate;
     private static String TAG = "Regular_fragment";
     Previous_pojo previous_pojo;
     ArrayList<Previous_pojo> list;
@@ -90,7 +84,7 @@ public class Regular_fragment extends Fragment {
 
     private void getDate(){
 
-        SimpleDateFormat currentDate = new SimpleDateFormat("dd-MM-yyyy");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat currentDate = new SimpleDateFormat("dd-MM-yyyy");
         Date todayDate = new Date();
         thisDate = currentDate.format(todayDate);
     }

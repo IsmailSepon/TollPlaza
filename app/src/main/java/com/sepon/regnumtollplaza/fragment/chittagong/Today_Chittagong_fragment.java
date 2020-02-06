@@ -1,9 +1,7 @@
 package com.sepon.regnumtollplaza.fragment.chittagong;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,14 +10,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.common.reflect.TypeToken;
 import com.google.firebase.database.DataSnapshot;
@@ -27,27 +23,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.database.core.Repo;
 import com.google.gson.Gson;
 import com.sepon.regnumtollplaza.AxelDetailsActivity;
-import com.sepon.regnumtollplaza.ChittagongActivity;
 import com.sepon.regnumtollplaza.R;
+import com.sepon.regnumtollplaza.admin.NewReport;
 import com.sepon.regnumtollplaza.admin.Report;
 import com.sepon.regnumtollplaza.pojo.Regular;
 
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static android.content.Context.MODE_PRIVATE;
-import static android.content.Context.MODE_WORLD_READABLE;
-import static androidx.constraintlayout.widget.Constraints.TAG;
-import static com.sepon.regnumtollplaza.ChittagongActivity.regularReport2;
 
 
 public class  Today_Chittagong_fragment extends Fragment implements View.OnClickListener {
@@ -82,21 +68,20 @@ public class  Today_Chittagong_fragment extends Fragment implements View.OnClick
         getDate();
         getstoreDatetosharepref();
         Log.e("share ", shareDate);
+        isTodayReportAvillable();
 
-        if (thisDate.equals(shareDate)){
-            //todo load & check from sharepreferenced
-                //getsharePreferencedata1();
+//        if (thisDate.equals(shareDate)){
+//                //getsharePreferencedata1();
+//
+//                 Regular regular = getRegular();
+//                 setInfo(regular);
+//                getsharePreferencedata2();
+//        }else {
+//            isTodayReportAvillable();
+//
+//        }
 
-                 Regular regular = getRegular();
-                 setInfo(regular);
-                getsharePreferencedata2();
-        }else {
-//            //todo load & check from firebase
-            isTodayReportAvillable();
-
-        }
-
-        initizCard(view);
+       // initizCard(view);
         return view;
     }
 
@@ -253,13 +238,13 @@ public class  Today_Chittagong_fragment extends Fragment implements View.OnClick
                 r6.setText("Regular : "+a7);
 
                 //store list to sharePreference
-                saveArrayList(totallaxel, "regular");
-                saveArrayList(regularReport2, "regularA2");
-                saveArrayList(regularReport3, "regularA3");
-                saveArrayList(regularReport4, "regularA4");
-                saveArrayList(regularReport5, "regularA5");
-                saveArrayList(regularReport6, "regularA6");
-                saveArrayList(regularReport7, "regularA7");
+//                saveArrayList(totallaxel, "regular");
+//                saveArrayList(regularReport2, "regularA2");
+//                saveArrayList(regularReport3, "regularA3");
+//                saveArrayList(regularReport4, "regularA4");
+//                saveArrayList(regularReport5, "regularA5");
+//                saveArrayList(regularReport6, "regularA6");
+//                saveArrayList(regularReport7, "regularA7");
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -273,13 +258,13 @@ public class  Today_Chittagong_fragment extends Fragment implements View.OnClick
     }
 
     private void getCtrlRdata() {
-         ArrayList<Report> ctrlReport2 = new ArrayList<>();
-         ArrayList<Report> ctrlReport3 = new ArrayList<>();
-         ArrayList<Report> ctrlReport4 = new ArrayList<>();
-         ArrayList<Report> ctrlReport5 = new ArrayList<>();
-         ArrayList<Report> ctrlReport6 = new ArrayList<>();
-         ArrayList<Report> ctrlReport7 = new ArrayList<>();
-         ArrayList<Report> allctrlReport = new ArrayList<>();
+         ArrayList<NewReport> ctrlReport2 = new ArrayList<>();
+         ArrayList<NewReport> ctrlReport3 = new ArrayList<>();
+         ArrayList<NewReport> ctrlReport4 = new ArrayList<>();
+         ArrayList<NewReport> ctrlReport5 = new ArrayList<>();
+         ArrayList<NewReport> ctrlReport6 = new ArrayList<>();
+         ArrayList<NewReport> ctrlReport7 = new ArrayList<>();
+         ArrayList<NewReport> allctrlReport = new ArrayList<>();
         // allctrlReport = new ArrayList<>();
 
         ProgressDialog dialog = ProgressDialog.show(getActivity(), "Getting Ctrl+R Report From Server", "Please wait...", true);
@@ -293,24 +278,27 @@ public class  Today_Chittagong_fragment extends Fragment implements View.OnClick
 
 
                 for(DataSnapshot singleSnapshot : dataSnapshot.getChildren()){
-                    Report report = singleSnapshot.getValue(Report.class);
-                    String tc = report.getTcClass();
-                    //Truck 2 Axle
-                    if (tc.equals("Truck 2 Axle")){
-                        ctrlReport2.add(report);
-                    }else if (tc.equals("Truck 3 Axle")){
-                        ctrlReport3.add(report);
-                    }else if (tc.equals("Truck 4 Axle")){
-                        ctrlReport4.add(report);
-                    }else if (tc.equals("Truck 5 Axle")){
-                        ctrlReport5.add(report);
-                    }else if (tc.equals("Truck 6 Axle")){
-                        ctrlReport5.add(report);
-                    }else if (tc.equals("Truck 7 Axle")){
-                        ctrlReport7.add(report);
-                    }else {
+                    NewReport report = singleSnapshot.getValue(NewReport.class);
+                    String tc = report.getD();
+                    if (tc != null){
+                        //Truck 2 Axle
+                        if (tc.equals("Truck 2 Axle")){
+                            ctrlReport2.add(report);
+                        }else if (tc.equals("Truck 3 Axle")){
+                            ctrlReport3.add(report);
+                        }else if (tc.equals("Truck 4 Axle")){
+                            ctrlReport4.add(report);
+                        }else if (tc.equals("Truck 5 Axle")){
+                            ctrlReport5.add(report);
+                        }else if (tc.equals("Truck 6 Axle")){
+                            ctrlReport5.add(report);
+                        }else if (tc.equals("Truck 7 Axle")){
+                            ctrlReport7.add(report);
+                        }else {
 
+                        }
                     }
+
 
                     allctrlReport.add(report);
                     ct = allctrlReport.size();
@@ -394,7 +382,7 @@ public class  Today_Chittagong_fragment extends Fragment implements View.OnClick
         today_toptext = view.findViewById(R.id.today_toptext);
     }
 
-    public void saveArrayList(ArrayList<Report> list, String key){
+    public void saveArrayList(ArrayList<NewReport> list, String key){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = prefs.edit();
         Gson gson = new Gson();
